@@ -435,28 +435,29 @@ for (i = 0; i < 10; i++)
 Mehr dazu später.
 [i[`++` increment operator]>] [i[`--` decrement operator]>]
 
-### The Comma Operator
+### Der Komma Operator
 
 [i[`,` comma operator]<]
-This is an uncommonly-used way to separate expressions that will run
-left to right:
+Es handelt sich hierbei um eine selten verwendete Art, Ausdrücke zu trennen, und wird
+von links nach rechts lausgewertet:
 
 ``` {.c}
 x = 10, y = 20;  // First assign 10 to x, then 20 to y
 ```
 
-Seems a bit silly, since you could just replace the comma with a
-semicolon, right?
+Wirkt ein wenig albern, da man das Komma einfach durch ein
+Semikolon ersetzen könnte, oder?
 
 ``` {.c}
 x = 10; y = 20;  // First assign 10 to x, then 20 to y
 ```
 
-But that's a little different. The latter is two separate expressions,
-while the former is a single expression!
+Es gibt aber einen kleinen Unterschied. Letzteres sind zwei getrennte
+Ausdrücke, während es sich beim ersten Beispiel um einen einzigen
+Ausdruck handelt!
 
-With the comma operator, the value of the comma expression is the value
-of the rightmost expression:
+Benutzt man den Komma-Operator entspricht der Wert des gesamten
+Komma-Ausdrucks dem Wert des Ausdrucks ganz rechts:
 
 ``` {.c}
 x = (1, 2, 3);
@@ -464,22 +465,22 @@ x = (1, 2, 3);
 printf("x is %d\n", x);  // Prints 3, because 3 is rightmost in the comma list
 ```
 
-But even that's pretty contrived. One common place the comma operator is
-used is in `for` loops to do multiple things in each section of the
-statement:
+Aber selbst das wirkt ziemlich konstruiert. Komma-Operators findet man
+häufig in in "for"-Schleifen, um in jedem Abschnitt der Anweisung
+mehrere Dinge Anweisung auszuführen:
 
 ``` {.c}
 for (i = 0, j = 10; i < 100; i++, j++)
     printf("%d, %d\n", i, j);
 ```
 
-We'll revisit that later.
+Wir kommen später nochmal drauf zurück.
 [i[`,` comma operator]>]
 
-### Conditional Operators
+### Vergleichende Operatoren 
 
 [i[Conditional Operators]<]
-For Boolean values, we have a raft of standard operators:
+Für Boolesche Werte gibt es jede Menge Operatoren: 
 [i[Comparison operators]] [i[`==` equality operator]]
 [i[`!=` inequality operator]] [i[`<` less than operator]]
 [i[`>` greater than operator]] [i[`<=` less or equal operator]]
@@ -494,10 +495,11 @@ a <= b;  // True if a is less than or equal to b
 a >= b;  // True if a is greater than or equal to b
 ```
 
-Don't mix up assignment `=` with comparison `==`! Use two equals to
-compare, one to assign.
+Bei Zuweisung `=` und Vergleich `==`  besteht Verwechselungsgefahr! Zwei
+Gleichheitszeichen vergleichen, ein einzelndes ist eine Zuweisung.
 
-We can use the comparison expressions with `if` statements:
+Vergleichende Operatoren können z.B. in `if` Ausdrücken verwendet
+werden:
 
 ``` {.c}
 if (a <= 10)
@@ -505,22 +507,24 @@ if (a <= 10)
 ```
 [i[Conditional Operators]>]
 
-### Boolean Operators
+### Boolesche Operatoren
 
 [i[Boolean Operators]<]
-We can chain together or alter conditional expressions with Boolean
-operators for _and_, _or_, and _not_.
+Logische Ausdrücke, also solche, die einen Booleschen Wert ergeben,
+können mit den Booleschen Operatoren für _and/und_. _oder/or_ and
+_nicht/not_ verkettet werden.
+
 [i[`&&` boolean AND]]
 [i[`!` boolean NOT]]
 [i[`||` boolean OR]]
 
-|Operator|Boolean meaning|
+|Operator|Boolesche Bedeutung|
 |:------:|:-------------:|
-|`&&`|and|
-|`||`|or|
-|`!`|not|
+|`&&`|und|
+|`||`|oder|
+|`!`|nicht, Umkehr, Inversion|
 
-An example of Boolean "and":
+Ein Beispiel für das boolesche "und":
 
 ``` {.c}
 // Do something if x less than 10 and y greater than 20:
@@ -529,57 +533,64 @@ if (x < 10 && y > 20)
     printf("Doing something!\n");
 ```
 
-An example of Boolean "not":
+Ein Beispiel der boolschen Inversion:
 
 ``` {.c}
 if (!(x < 12))
     printf("x is not less than 12\n");
 ```
 
-`!` has higher precedence than the other Boolean operators, so we have
-to use parentheses in that case.
+`!` hat einen höheren Priorität als die anderen booleschen Operatoren,
+daher müssen wir in diesem Fall Klammern verwenden.
 
-Of course, that's just the same as:
+Das Beispiel kann man natürlich auch wie folgt ausdrücken:
 
 ``` {.c}
 if (x >= 12)
     printf("x is not less than 12\n");
 ```
 
-but I needed the example!
+aber ich brauchte ein Beispiel!
 [i[Boolean Operators]>]
 
-### The `sizeof` Operator {#sizeof-operator}
+### Der `sizeof` Operator {#sizeof-operator}
 
-[i[`sizeof` operator]<]
-This operator tells you the size (in bytes) that a
-particular variable or data type uses in memory.
+[i[`sizeof` operator]<] Dieser Operator gibt die Größe (in Bytes) an,
+die eine bestimmte Variable oder ein bestimmter Datentyp im Speicher
+verwendet.
 
-More particularly, it tells you the size (in bytes) that the _type of a
-particular expression_ (which might be just a single variable) uses in
-memory.
+Insbesondere gibt er die Größe (in Bytes) an, die der _Typ eines
+bestimmten Ausdrucks_ (wobei es sich auch um eine einzelne Variable
+handeln kann) im Speicher belegt.
 
-This can be different on different systems, except for `char`[i[`char`
-type]] and its variants (which are always 1 byte).
+Die Größe kann auf verschiedenen Systemen variieren, außer bei
+`char`[i[`char` type]] und seinen Varianten (die immer 1 Byte sind).
 
-And this might not seem very useful now, but we'll be making references
-to it here and there, so it's worth covering.
+Das mag jetzt noch nicht sehr nützlich erscheinen, aber wir werden hier
+und da darauf verweisen, daher lohnt es sich an dieser Stelle
+anzusprechen.
 
-Since this computes the number of bytes needed to store a type, you
-might think it would return an `int`. Or... since the size can't be
-negative, maybe an `unsigned`?
+Da `sizeof` die Anzahl notwendiger Bytes berechnet, könnte man meinen,
+es würde `int` zurückgeben. Oder... da die Größe nicht negativ sein
+kann, vielleicht ein `unsigned` (ohne Vorzeichen)?
+
+<!-- Translator Note: unsigned not introduced at this point -->
 
 [i[`size_t` type]<]
-But it turns out C has a special type to represent the return value from
-`sizeof`. It's `size_t`, pronounced "_size tee_"^[The `_t` is short for
-`type`.]. All we know is that it's an unsigned integer type that can
-hold the size in bytes of anything you can give to `sizeof`.
+Tatsächlich verfügt C über einen besonderen Typ, um Rückgabewerte von
+`sizeof` darzustellen. Nämlich `size_t`, gesprochen "_zeihz_ti_"^[Das
+`_t` steht für Type.] Wir wissen nur, dass es sich um einen `unsigned`
+Type handelt, dessen Größe ausreicht um jeglichen Rückgabewert von
+`sizeof` zu halten.
 
-`size_t` shows up a lot of different places where counts of things are
-passed or returned. Think of it as a value that represents a count.
+<!-- Translator Note: perhaps an aside that this corresponds to the
+addressable memory and is thus dependant on memory arch? -->
+
+`size_t` taucht immer wieder an Stellen auf, wo die Anzahl von Dinge
+rumgereicht werden. Betrachte es als Wert der eine Anzahl darstellt. 
 [i[`size_t` type]>]
 
-You can take the `sizeof` a variable or expression:
+Du kannst `sizeof` von einer Variabel oder einem Wert ermitteln:
 
 ``` {.c}
 int a = 999;
@@ -593,59 +604,65 @@ printf("%zu\n", sizeof 3.14);   // Prints 8 on my system
 // If you need to print out negative size_t values, use %zd
 ```
 
-Remember: it's the size in bytes of the _type_ of the expression, not
-the size of the expression itself. That's why the size of `2+7` is the
-same as the size of `a`---they're both type `int`. We'll revisit this
-number `4` in the very next block of code...
+Merke: Es geht um die Größe des _Typs_ des Ausdrucks in Bytes, nicht die
+Größe des Ausdrucks selbst. Deshalb ist die Größe von `2+7` die gleiche
+wie die Größe von `a` --  beide sind vom Typ `int`. Wir gehen auf diese
+Zahl `4` im nächsten Beispiel näher ein...
 
-...Where we'll see you can take the `sizeof` a type (note the
-parentheses are required around a type name, unlike an expression):
+...Dort  sehen wir, dass man die `sizeof` eines Typs ermitteln kann
+(beachte, dass im Gegensatz zu Ausdrücken, bei Typen Klammern zwingend
+erforderlich sind):
 
 ``` {.c}
 printf("%zu\n", sizeof(int));   // Prints 4 on my system
 printf("%zu\n", sizeof(char));  // Prints 1 on all systems
 ```
 
-It's important to note that `sizeof` is a _compile-time_
-operation^[Except for with variable length arrays---but that's a story
-for another time.]. The result of the expression is determined entirely
-at compile-time, not at runtime.
+Man sollte wissen, dass `sizeof` eine _compile-time_ Operation
+ist^[Außer bei Arrays mit variabler Länge---aber die heben wir uns für
+ein anderes Mal auf.]. Das Ergebnis des Ausdrucks wird im Rahmen der
+Kompilierung ermittelt, nicht zur Laufzeit.
 
-We'll make use of this later on.
+Davon werden wir später Gebrauch machen.
+
 [i[`sizeof` operator]>]
 
 
-## Flow Control
+## Ablaufsteuerung (Flow Control)
 
 [i[Flow Control]<]
-Booleans are all good, but of course we're nowhere if we can't control
-program flow. Let's take a look at a number of constructs: `if`, `for`,
-`while`, and `do-while`.
 
-First, a general forward-looking note about statements and blocks of
-statements brought to you by your local friendly C developer:
-
-After something like an `if` or `while` statement, you can either put a single
-statement to be executed, or a block of statements to all be executed in
-sequence.
+Boolesche Verknüpfungen sind zwar prima, aber wir sind natürlich
+aufgeschmissen, wenn wir sie nicht nutzen könnten,  um den Programmfluss
+zu kontrollieren. Werfen wir einen Blick auf eine Reihe von Konstrukten:
+`if`, `for`, while" und "do-while".
+ 
+Zunächst ein allgemeiner Hinweis zu Anweisungen und Blöcken von
+Anweisungen, von ihrem freundlichen, ortansässigen C-Entwickler:
+ 
+Auf eine `if`- oder `while`-Anweisung folgt entweder eine einzelne
+Anweisung, oder ein in geschweiften Klammern zusammengefasster Block aus
+Anweisungen, die in Reihenfolge ausgeführt werden.
 
 [i[`if` statement]<]
-Let's start with a single statement:
+Fangen wir mit der einzelnen Anweisung an:
 
 ``` {.c}
 if (x == 10) printf("x is 10\n");
 ```
 
-This is also sometimes written on a separate line. (Whitespace is largely
-irrelevant in C---it's not like Python.)
+Das wird auch manchmal auf zwei Zeilen aufgeteilt. (Leerzeichen sind, im
+Gegensatz zu Python, in C weistesgehend irrelevant)
 
 ``` {.c}
 if (x == 10)
     printf("x is 10\n");
 ```
 
-But what if you want multiple things to happen due to the conditional?
-You can use squirrelly braces to mark a _block_ or _compound statement_.
+Aber was ist, wenn mehrere Schritte in Abhängigkeit einer Kondition
+ausgeführt werden sollen? Einfach, mehrere Anweisung können mit
+geschweiften Klammern zu einem _Block_ oder _compound statment_
+(einer zusammengesetzten Anweisung) zusammengeführt werden. 
 
 ``` {.c}
 if (x == 10) {
@@ -654,8 +671,8 @@ if (x == 10) {
 }
 ```
 
-It's a really common style to _always_ use squirrelly braces even if
-they aren't necessary:
+In der Tat ist es ziemlich üblich geschweifte Klammern zu nutzen,
+selbst, wenn Sie genaugenommen nicht notwendig wären:
 
 ``` {.c}
 if (x == 10) {
@@ -663,9 +680,9 @@ if (x == 10) {
 }
 ```
 
-Some devs feel the code is easier to read and avoids errors like this
-where things visually look like they're in the `if` block, but actually
-they aren't.
+Einige Entwickler meinen, der Code sei einfacher zu lesen und vermeide
+Fehler wie den folgenden, bei der die Einrückung vortäuscht, dass beide
+Ausdrücke teil des `if` Blocks wären:
 
 ``` {.c}
 // BAD ERROR EXAMPLE
@@ -675,20 +692,27 @@ if (x == 10)
     printf("This happens ALWAYS\n");  // Surprise!! Unconditional!
 ```
 
-`while` and `for` and the other looping constructs work the same way as
-the examples above. If you want to do multiple things in a loop or after
-an `if`, wrap them up in squirrelly braces.
+`while` und `for` und weitere Schleifenkonstrukte verhalten sich
+ähnlich. Wenn mehrere Anweisungen ausgeführt werden sollen, müssen sie
+in geschweifte Klammern gepackt werden. 
 
-In other words, the `if` is going to run the one thing after the `if`.
-And that one thing can be a single statement or a block of statements.
+Anders ausgedrückt, führt `if` genau die eine Anweisung Anweisung die
+ihr folgt aus, und dabei kann es sich um eine Einzelanweisung oder einen
+Block handeln.
+
 [i[`if` statement]>]
 
 
-### The `if`-`else` statement {#ifstat}
+### Die `if`-`else` Anweisung {#ifstat}
+
 
 [i[`if`-`else` statement]<]
 We've already been using `if` for multiple examples, since it's likely
 you've seen it in a language before, but here's another:
+
+Wir haben `if` bereits in mehreren Beispielen verwendet, da das
+Konstrukt vermutlich aus anderen Sprachen bekannt ist. Hier ist noch ein
+Beispiel:
 
 ``` {.c}
 int i = 10;
@@ -701,16 +725,19 @@ if (i > 10) {
 if (i <= 10) printf("i is less than or equal to 10.\n");
 ```
 
-In the example code, the message will print if `i` is greater than 10,
-otherwise execution continues to the next line. Notice the squirrley
-braces after the `if` statement; if the condition is true, either the
-first statement or expression right after the if will be executed, or
-else the collection of code in the squirlley braces after the `if` will
-be executed. This sort of _code block_ behavior is common to all
-statements.
+<!-- Translator Note: this is weirdly repetitive of the previous section
+and the either/or seems confusing, especially the context of if/else.
+It's also confusing because the execution doesn't "continue on the next
+line" otherwise, but after the block.-->
 
-Of course, because C is fun this way, you can also do something if the
-condition is false with an `else` clause on your `if`:
+In dem Beispiel werden die Meldungen gedruckt, wenn `i` größer als 10
+ist. Sonst läuft das Programm nach dem Block weiter. Wie bereits gesagt
+kann nach dem `if` entweder eine einzelne Anweisung oder ein Block
+stehen. Diese Art Blöck sind bei allen Anweisungen üblich.
+
+Und weil's Spaß macht, kann man natürlich auch etwas tun, wenn die
+Bedingung falsch ist, und zwar mit einer `else`-Klausel
+nach dem `if`: 
 
 ``` {.c}
 int i = 99;
@@ -723,8 +750,8 @@ else {
 }
 ```
 
-And you can even cascade these to test a variety of conditions, like
-this:
+Und Du kannst `else` sogar kaskadieren, um mehrere Bedingungen zu
+testen:
 
 ``` {.c}
 int i = 99;
@@ -745,21 +772,23 @@ else
     printf("i is some crazy number I've never heard of.\n");
 ```
 
-Though if you're going that route, be sure to check out the
-[`switch`](#switch-statement) statement for a potentially better
-solution. The catch is `switch` only works with equality comparisons
-with constant numbers. The above `if`-`else` cascade could check
-inequality, ranges, variables, or anything else you can craft in a
-conditional expression.
+Wenn das vorkommt, sollte man jedoch zuerst bei der
+[`switch`](#switch-statement) Anweisung nach einer potentiell bessere
+Lösung suchen. Der Haken ist, dass `switch` nur auf Gleichheit prüfen
+kann und das auch nur mit konstanten Werten. Die obige
+`if`-`else`-Kaskade kann auch Ungleichheit oder Werte-Bereiche prüfen,
+mit Variablen vergleichen oder jeglich Kondition ermitteln die gewünscht
+ist. [i[`if`-`else`-Anweisung]>]
+
 [i[`if`-`else` statement]>]
 
-### The `while` statement {#whilestat}
-
+### Die `while` Anweisung {#whilestat}
 [i[`while` statement]<]
-`while` is your average run-of-the-mill looping
-construct. Do a thing while a condition expression is true.
 
-Let's do one!
+`while` ist das nullachtfünfzehn Schleifenkonstrukt in C. Wiederhole
+irgendwas, solange eine Kondition wahr ist. 
+
+Probieren wir's!
 
 ``` {.c}
 // Print the following output:
@@ -780,11 +809,11 @@ while (i < 10) {
 printf("All done!\n");
 ```
 
-That gets you a basic loop. C also has a `for` loop which would have
-been cleaner for that example.
+Damit hätte man eine einfache Schleife. C verfügt auch über eine
+`for` Schleife, die in diesem Beispiel etwas sauberer gewesen wäre.
 
-A not-uncommon use of `while` is for infinite loops where you repeat
-while true:
+Eine nicht ganz unübliche Verwendnug von `while` Schleife ist die endlos
+Schleife, die die Bedingung "wahr" hat:
 
 ``` {.c}
 while (1) {
@@ -794,19 +823,21 @@ while (1) {
 [i[`while` statement]>]
 
 
-### The `do-while` statement {#dowhilestat}
+### Die `do-while` Anweisung {#dowhilestat}
 
 [i[`do`-`while` statement]<]
-So now that we've gotten the `while` statement under control, let's take
-a look at its closely related cousin, `do-while`.
 
-They are basically the same, except if the loop condition is false on
-the first pass, `do-while` will execute once, but `while` won't execute
-at all. In other words, the test to see whether or not to execute the
-block happens at the _end_ of the block with `do-while`. It happens at
-the _beginning_ of the block with `while`.
+Da wir nun die `while`-Anweisung im Griff  haben, wagen wir einen Blick
+auf ihre enge Verwandte, die `do-while`.
 
-Let's see by example:
+Sie sind im Grunde gleich, es sei denn, die Schleifenbedingung ist beim ersten
+Durchlauf falsch. Dann wird `do-while` einmal ausgeführt, aber
+`while`  überhaupt nicht. Anders ausgedrückt, der Test, ob der Block
+ausgeführt werden soll oder nicht, findet bei `do-while` Schleifen nach
+der Ausführung des Blocks statt.  Bei  `while` Schleifen davor.
+
+Schauen wir uns ein Beispiel an:
+
 
 ``` {.c}
 // Using a while statement:
@@ -834,19 +865,22 @@ do {
 printf("All done!\n");
 ```
 
-Notice that in both cases, the loop condition is false right away. So in
-the `while`, the loop fails, and the following block of code is never
-executed. With the `do-while`, however, the condition is checked _after_
-the block of code executes, so it always executes at least once. In this
-case, it prints the message, increments `i`, then fails the condition,
-and continues to the "All done!" output.
+In beiden Fällen ist die Schleifenbedingung von Anfang an falsch ist.
+Daher wird der `while` Codeblock nie ausgeführt. Bei der
+`do-while`-Schleife hingegen wird die Bedingung _nach_ der Ausführung
+des Codeblocks geprüft, so dass dieser immer mindestens einmal
+ausgeführt wird: Die Meldung wird ausgedruckt, `i` inkrementiert, und
+erst dann ist die Bedingung nicht erfüllt, und das Programm fährt mit
+der Ausgabe "Alles erledigt!" fort.
+ 
+Kurz und Gut: Wenn gewünscht ist, dass die Schleife mindestens einmal
+ausgeführt wird und zwar unabhängig von der Schleifenbedingung, verwende
+`do-while`.
+ 
+Alle diese Beispiele wären wohl eher für eine "for"-Schleife geeignet.
+Lassen Sie uns etwas weniger Deterministisches ausprobieren -
+wiederholen, bis eine bestimmte Zufallszahl auftaucht!
 
-The moral of the story is this: if you want the loop to execute at least
-once, no matter what the loop condition, use `do-while`.
-
-All these examples might have been better done with a `for` loop. Let's
-do something less deterministic---repeat until a certain random number
-comes up!
 
 ``` {.c .numberLines}
 #include <stdio.h>   // For printf
@@ -863,28 +897,31 @@ int main(void)
 }
 ```
 
-Side note: did you run that more than once? If you did, did you notice
-the same sequence of numbers came up again. And again. And again? This
-is because `rand()` is a pseudorandom number generator that must be
-_seeded_ with a different number in order to generate a different
-sequence. Look up the
+Nebenbemerkung: hast Du versucht, das Programm mehrmals laufen zu
+lassen? Ist Dir aufgefallen, dass sich die Zufallszahlen wiederholt
+haben? Immer wieder? Das liegt daran, dass es sich bei `rand()` um eine
+Pseudozufallszahlen Generator handelt der einen _Seed_ verwendet um
+entweder dieselbe oder unterschiedliche Sequenzen zu generieren.
+Schau Dir mal: 
 [fl[`srand()`|https://beej.us/guide/bgclr/html/split/stdlib.html#man-srand]]
-function for more details. [i[`do`-`while` statement]>]
+für mehr Infos an.
+[i[`do`-`while` statement]>]
 
 ### The `for` statement {#forstat}
+### Die `for` Anweisung {#forstat}
 
 [i[`for` statement]<]
-Welcome to one of the most popular loops in the world! The `for`
-loop!
 
-This is a great loop if you know the number of times you want to loop in
-advance.
+Willkommen bei der beliebtesten Schleife der Welt! Der `for` Schleife!
 
-You could do the same thing using just a `while` loop, but the `for`
-loop can help keep the code cleaner.
+Das ist die beste Schleifen, wenn Du schon im vorhinein weisst, wie
+häufig Du die Schleife durchlaufen willst.
 
-Here are two pieces of equivalent code---note how the `for` loop is just
-a more compact representation:
+Dasselbe Verhalten kann man mit eine `while` Schleife erreichen, aber
+die `for` Schleife hilft, den Code sauber zu halten.
+
+Hier sind zwei vergleichbare Code Schnipsel -- man sieht, dass die `for`
+Schleife das Verhalten kompakter ausdrückt.
 
 ``` {.c}
 // Print numbers between 0 and 9, inclusive...
@@ -904,26 +941,30 @@ for (i = 0; i < 10; i++) {
 }
 ```
 
-That's right, folks---they do exactly the same thing. But you can see
-how the `for` statement is a little more compact and easy on the eyes.
-(JavaScript users will fully appreciate its C origins at this point.)
+Nochmal -- beide Abschnitt bewirken genaue dasselbe Verhalten. Aber man
+sieht, dass die `for` Schleife etwas kompakter und augenschonender ist.
+(JavaScript-Benutzer werden an dieser Stelle seine C-Ursprünge zu
+schätzen wissen.)
 
-It's split into three parts, separated by semicolons. The first is the
-initialization, the second is the loop condition, and the third is what
-should happen at the end of the block if the loop condition is true. All
-three of these parts are optional.
+
+`for` ist in drei, durch Semikolons getrennte Teile aufgeteilt. Der
+erste Teil ist die Initialisierung, der zweite ist die
+Schleifenbedingung und der dritte ist das, was am Ende des Blocks
+geschehen soll, sofern die Schleifenbedingung wahr ist. Alle drei dieser
+Teile sind optional.
+
 
 ``` {.c}
 for (initialize things; loop if this is true; do this after each loop)
 ```
 
-Note that the loop will not execute even a single time if the loop
-condition starts off false.
+Beachte, dass die Schleife überhaupt nicht ausgeführt wird, wenn die
+Schleifenbedingung Bedingung zu Anfang falsch ist.
 
 > **`for`-loop fun fact!**
 >
-> You can use the comma operator to do multiple things in each clause of
-> the `for` loop!
+> Man kann den Komma Operator verwenden, um in jeden Abschnitt der `for`
+> Schleife mehrere Dinge zu tun!
 >
 > ``` {.c}
 > for (i = 0, j = 999; i < 10; i++, j--) {
@@ -931,7 +972,7 @@ condition starts off false.
 > }
 > ```
 
-An empty `for` will run forever:
+Ein leeres `for` läuft ewig: 
 
 ``` {.c}
 for(;;) {  // "forever"
@@ -943,21 +984,27 @@ for(;;) {  // "forever"
 ```
 [i[`for` statement]>]
 
-### The `switch` Statement {#switch-statement}
+### Die `switch` Anweisung {#switch-statement}
 
-[i[`switch` statement]<]
-Depending on what languages you're coming from, you might or might not
-be familiar with `switch`, or C's version might even be more restrictive
-than you're used to. This is a statement that allows you to take a
-variety of actions depending on the value of an integer expression.
 
-Basically, it evaluates an expression to an integer value, jumps to the
-[i[`case` statement]<]`case` that corresponds to that value. Execution
-resumes from that point. If a `break`[i[`break` statement]<] statement is
-encountered, then execution jumps out of the `switch`.
+[i[`switch` statement]<] 
 
-Let's do an example where the user enters a number of goats and we print
-out a gut-feel of how many goats that is.
+Je nachdem, mit welchen Programmiersprachen Du vertraut bist, kann es
+sein, dass`switch` schon bekannt ist.  Es kann auch sei, dass die C
+Variante restriktiver als gewohnt ist. Es handelt sich bei `switch` um
+eine Anweisung, die es erlaubt, unterschiedliche Aktionen in
+Abhängigkeit vom Wert eines ganzzahligen Ausdrucks auszuführen.
+
+Im Grunde wertet es einen Ausdruck zu einem ganzzahligen Wert aus,
+springt zu dem entsprechenden [i[`case`-Anweisung]<]`case`. Die
+Ausführung wird an diesem Punkt fortgesetzt. Sobald eine
+`break`[i[`break`-Anweisung]<] Anweisung gefunden wird, springt die
+Ausführung aus dem `Switch` heraus.
+
+Lass uns ein Beispiel schreiben. Die Benutzerin gibt eine Anzahl Ziegen
+ein und wir nennen unser Bauchgefühl, um wieviele Ziegen es sich
+handelt.
+
 
 ``` {.c .numberLines}
 #include <stdio.h>
@@ -989,18 +1036,21 @@ int main(void)
 }
 ```
 
-In that example, if the user enters, say, `2`, the `switch` will jump to
-the `case 2` and execute from there. When (if) it hits a `break`, it
-jumps out of the `switch`. [i[`break` statement]>]
 
-Also, you might see that `default`[i[`default` label]] label there at
-the bottom. This is what happens when no cases match.
+`Gib der Benutzer z.B. `2` ein, springt der `switch` zu `casel 2` und
+der Programmablauf wird an dieser stelle fortgesetzt.  Trifft der Ablauf
+auf ein `Break`, springt er aus dem `Switch` heraus. [i[Anweisung
+`break`]>]
 
-Every `case`, including `default`, is optional. And they can occur in
-any order, but it's really typical for `default`, if any, to be listed
-last.[i[`case` statement]>]
+Vielleicht ist Dir auch das das `default`[i[`default` label]]-Label  am
+am Ende aufgefallen. Dort springt der Programmablauf hin, wenn sich
+keine übereinstimmendes `case`findet.
 
-So the whole thing acts like an `if`-`else` cascade:
+Jeder `case`, einschließlich `default`, ist optional. Und die Fälle
+können in beliebiger Reihenfolge aufgeführt sein, wobei es sehr unüblich
+wäre, wenn `default`nicht am Ende stünde.[i[`case`-Anweisung]>]
+
+Das Ganze verhält sich also wie eine `if`-`else`-Kaskade:
 
 ``` {.c}
 if (goat_count == 0)
@@ -1013,23 +1063,28 @@ else
     printf("You have a bona fide plethora of goats!\n");
 ```
 
-With some key differences:
+Mit ein paar kleinen Unterschieden:
 
-* `switch` is often faster to jump to the correct code (though the spec
-  makes no such guarantee).
-* `if`-`else` can do things like relational conditionals like `<` and
-  `>=` and floating point and other types, while `switch` cannot.
+* `switch` springt häufig schneller zu dem korrekten Fall (wobei das nicht von der Spezifikation vorgesehen ist)
 
-There's one more neat thing about switch that you sometimes see that is
-quite interesting: _fall through_.
+<!-- Translator Note: this might be dangerous to tell people who are
+still learning C. In general, code produced by a modern compiler should
+be equivalent and this would tempt people towards premature optimization
+-->
+
+* `if`-`else` kann Bedingungen `<`, `>=` verwenden, und Fliesskomma Zahlen und andere nicht ganzzahlige Typen vergleich, was `switch` nicht kann.
+
+Eine spannende Sache noch, die man gelegentlich sieht: das _fall
+through_.
 
 [i[`break` statement]<]
-Remember how `break` causes us to jump out of the switch?
+Erinnerst Du Dich, dass `break` verwendet wird, um aus dem
+`switch` zu springen?
 
 [i[Fall through]<]
-Well, what happens if we _don't_ `break`?
-
-Turns out we just keep on going into the next `case`! Demo!
+Nun gut, aber was passiert wenn wir _kein_ `break` verwenden?
+Es stellt sich herraus, dass wir einfach mit dem nächsten `case` Fall
+weitermachen! So nämlich:
 
 ``` {.c}
 switch (x) {
@@ -1045,34 +1100,40 @@ switch (x) {
 }
 ```
 
-If `x == 1`, this `switch` will first hit `case 1`, it'll print the `1`,
-but then it just continues on to the next line of code... which prints
-`2`!
+Wenn `x == 1`, springt `switch` zuerst zu `case 1`, druckt die `1`,
+aber macht dann einfach weiter... und druckt `2`!
 
-And then, at last, we hit a `break` so we jump out of the `switch`.
+Immerhin treffen wir dann auf ein `break'und springen aus dem `switch`.
 
-if `x == 2`, then we just hit the `case 2`, print `2`, and `break` as
-normal.
+Wann `x == 2`, springen wir einfach nach `case 2`, drucken `2`, und
+`break`en wie üblich.
 
-Not having a `break` is called _fall through_.
+Kein `break` zu verwenden wird _fall through_ Bezeichnet.
 
-ProTip: _ALWAYS_ put a comment in the code where you intend to fall
-through, like I did above. It will save other programmers from wondering
-if you meant to do that.
+ProTip: Wenn _fall through_ verwendet wird, sollte, wie im Beispiel
+immer ein Kommentar gesetzt werden, dann anderen Programmierern klar
+ist, dass es sich im intentiertes Verhalten handelt. 
+
 [i[Fall through]>]
 
-In fact, this is one of the common places to introduce bugs in C
-programs: forgetting to put a `break` in your `case`. You gotta do it if
-you don't want to just roll into the next case^[This was considered
-such a hazard that the designers of the Go Programming Language made
-`break` the default; you have to explicitly use Go's `fallthrough`
-statement if you want to fall into the next case.].
+Vergessene `break` Anweisungen sind in der Tat eine der häufigsten
+vermeidbaren Fehlerquellen in C. In der Regel ist das `break`
+für die Programmlogik erforderlich, wird aber von der Sprache nicht
+verlangt.^[Das Verhalten wurde von den Designern der Go Sprach als so
+problematisch erachtet, dass in Go das Verhalten umgekehrt ist: `break`
+ist das, implizite, default Verhalten, wenn es nicht gewünscht ist muss
+eine `fallthrough` Anweisung verwendet werden.]
+
+<!-- Translator Note: added that break is usually necessary for the
+program's logic, but not necessary for the program's logic -->
+
 [i[`break` statement]>]
 
-Earlier I said that `switch` works with integer types---keep it that
-way. Don't use floating point or string types in there. One loophole-ish
-thing here is that you can use character types because those are
-secretly integers themselves. So this is perfectly acceptable:
+Vorhin wurde erwähnt, dass `switch` mit Integer-Typen funktioniert -
+halte Dich dran. Eine Art Ausnahme sind `char` Typen, die uns an dieser
+Stelle vielleicht noch ein bisschen wir Zeichenkette vorkommen, aber
+insgeheim Ganzzahlen sind. Folgendes ist daher vollkommen akyeptabel:
+
 
 ``` {.c}
 char c = 'b';
@@ -1092,7 +1153,8 @@ switch (c) {
 }
 ```
 
-Finally, you can use [i[`enum` keyword]]`enum`s in `switch` since they
-are also integer types. But more on that in the `enum` chapter.
+Zu guter Letzt gibt es noch  [i[Schlüsselwort `enum`]]`enum`s die auch
+in `switch` verwendet werden dürfen, da sie auch Integer-Typen sind.
+Aber mehr dazu im Kapitel "enum".
 
 [i[`switch` statement]>] [i[`break` statement]>] ni[Flow Control]>]P
