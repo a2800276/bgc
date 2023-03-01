@@ -2,8 +2,7 @@
 
 # vim: ts=4:sw=4:nosi:et:tw=72
 -->
-# Pointers---Cower In Fear! {#pointers}
-
+# Zeiger---Werfe Dich nieder in Demut! {#pointers}
 > _"How do you get to Carnegie Hall?"_ \
 > _"Practice!"_
 >
@@ -28,7 +27,7 @@ irgendeines Typs verweist.
 
 Das ist in etwa dasselbe, nur dass wir in C expliziter sagen müssen, ob wir über die Referenz oder das referenzierte Objekt sprechen.
 
-## Memory and Variables {#ptmem}
+## Speicher und Variabeln {#ptmem}
 
 Der Arbeitsspeicher eines Computers speichert ja alle möglichen Arten
 von Daten.  Er speichert `float`'s, `int`'s, oder was auch immer. Damit
@@ -216,7 +215,6 @@ Auskunft darüber, wo der Wert von `i` liegt. Er zeigt auf `i`.
 Und nochmal, i.d.R. ist uns der spezifische Wert der Adresse egal. Es
 zählt nur, dass es sich um einen Zeiger auf `i` handelt.
 
-## Pointer Types {#pttypes}
 ## Zeiger Typen (_Pointer Types_) {#pttypes}
 
 [i[Pointer types]<]
@@ -279,7 +277,6 @@ Stellen wir den anti-address-of Operator vor. Den `address-of` aus der
 Unterwelt.
 [i[Pointer types]>]
 
-## Dereferencing {#deref}
 ## Dereferenzierung {#deref}
 [i[Dereferencing]<]
 Eine Zeiger Variabel verweist, oder _referenziert_ eine andere Variabel
@@ -346,7 +343,6 @@ den Zeiger selbst. So gesehen ist `*p` so etwas wie ein Alias von `i`.
 Great, but _why_? Why do any of this?
 Super, aber _warum_? Warum tun wir das?
 
-## Passing Pointers as Arguments {#ptpass}
 ## Zeiger als Argumente übergeben {#ptpass}
 
 [i[Pointers-->as arguments]<]
@@ -482,7 +478,6 @@ Zeiger noch nicht initialisiert wurde.
 man ihnen nicht explizit eine Adresse oder `NULL` zuweist.)
 [i[`NULL` pointer]>]
 
-## A Note on Declaring Pointers
 ## Zeiger Deklarieren.
 
 [i[Pointers-->declarations]<]
