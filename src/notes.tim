@@ -10,5 +10,19 @@
 - size : German is larger
 
 - weird feeling of translating I, psychology
+`enum`s können selbstverständlich auch ge`typedef`t werden, aber ich
+persönlich mag das nicht.^[Anmerkung des Übersetzers: ich schon.]
 
 - minimal translation unit - sentence paragraph. Deepl gets confused
+
+
+- typisch:
+
+if values are omitted, numbering continues counting in the positive
+direction from whichever value was last specified. For example:
+
+Wenn Werte weggelassen werden, wird die Nummerierung in positiver Richtung
+Richtung weiter, je nachdem, welcher Wert zuletzt angegeben wurde. Zum Beispiel:
+
+werden Werte ausgelassen, wird die Nummerierung hinter dem zuletzt
+vorgegebenen Wert in positiver Reihenfolge weitergeführt. Zum Beispiel:
