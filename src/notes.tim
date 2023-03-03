@@ -26,3 +26,19 @@ Richtung weiter, je nachdem, welcher Wert zuletzt angegeben wurde. Zum Beispiel:
 
 werden Werte ausgelassen, wird die Nummerierung hinter dem zuletzt
 vorgegebenen Wert in positiver Reihenfolge weitergeführt. Zum Beispiel:
+
+
+- exagerated Spatial Coherence
+
+0500:
+
+More on this in the [Passing Single Dimensional Arrays to
+Functions](#passing1darrays) section, below.
+
+Mehr dazu im Abschnitt [Übergabe eindimensionaler Arrays an
+Funktionen](#passing1darrays), unten.
+
+vs.
+
+Mehr dazu weiter unten im Abschnitt [Eindimensionale Arrays an Funktionen
+übergeben](#passing1darrays).
