@@ -42,3 +42,20 @@ vs.
 
 Mehr dazu weiter unten im Abschnitt [Eindimensionale Arrays an Funktionen
 übergeben](#passing1darrays).
+
+Deutsch & English
+- der das Array.  Oder gar "Feld?"
+	- der das Index
+- Computer vs Rechner. "On my computer the following happens"
+- undefined behavior
+- memory protection / mmu - Speicherschutz, Speicherverwaltungseinheit
+
+
+
+--- Non Translation, bloggy stuff
+
+- stack vs. heap, memory layout. Printing addresses of variables, sp, implmenting own stacktrace.
+- stack vs. heap: read stack variables that happen to still be on the heap, read bzond arrays, read data left laying around on the heap (security)
+- memory layout: addresses of function, stack, heap, static and non static global vars.
+- types : convert float & int ...
+- multi dimensional arrays, performance: row-major vs column-major order, traversal.

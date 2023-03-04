@@ -163,8 +163,8 @@ int main(void)
 Der Haken: bei den Werten muss es sich um Konstanten handeln! Variabeln
 sind an dieser Stelle nicht erlaubt.
 
-Auf keinen Fall sollte man mehr Element in der Initialisierung angeben
-als in den Array passen. Den Fehler fängt aber der Compiler und wird
+Man sollte auf keinen Fall mehr Element in der Initialisierung angeben
+als in das Array passen. Den Fehler fängt aber der Compiler und wird
 ungemütlich:
 
 ``` {.zsh}
@@ -244,15 +244,18 @@ int a[] = {22, 37, 3490};  // Left the size off!
 ```
 [i[Array initializers]>]
 
-## Out of Bounds!
+## Out of Bounds! (klare Grenzen)
+
 
 [i[Arrays-->out of bounds]<]
-C doesn't stop you from accessing arrays out of bounds. It might not
-even warn you.
+C verhindert nicht, dass man auf Stellen zugreift, die ausserhalb des
+Arrays liegen^[Anm.d.Ü. Im englischen werden solche Fehler _out of
+bounds violations_ bezeichnet.]. Im Zweifelsfall gibt es nicht mal eine
+Warnung.
 
-Let's steal the example from above and keep printing off the end of the
-array. It only has 5 elements, but let's try to print 10 and see what
-happens:
+Schnappen wir uns das letzte Beispiel und drucken einfach hinter dem
+Ende des Arrays weiter. Das Array enthält nur 5 Elemente, aber versuchen
+wir einfach 10 zu drucken und schauen was passiert.
 
 ``` {.c .numberLines}
 #include <stdio.h>
@@ -268,7 +271,7 @@ int main(void)
 }
 ```
 
-Running it on my computer prints:
+Auf meinem Rechner passiert folgendes:
 
 ``` {.default}
 22
@@ -283,31 +286,35 @@ Running it on my computer prints:
 21890
 ```
 
-Yikes! What's that? Well, turns out printing off the end of an array
-results in what C developers call _undefined behavior_. We'll talk more
-about this beast later, but for now it means, "You've done something
-bad, and anything could happen during your program run."
+Hoppla! Ausdrucken von Array Elementen, die sich hinter dem Ende des
+Arrays befinden, erzeugt was C Programmierer _undefined behavior_
+(undefiniertes Verhalten) nennen. Dieses Verhalten hat einen besonderen
+Stellenwert in C auf das wir später noch zu sprechen kommen. Als
+aktuelles Verständnis reicht: "Du warst böse und das kann beliebige
+Folgen haben, wenn Dein Programm läuft".
 
-And by anything, I mean typically things like finding zeroes, finding
-garbage numbers, or crashing. But really the C spec says in this
-circumstance the compiler is allowed to emit code that does
-_anything_^[In the good old MS-DOS days before memory protection was a
-thing, I was writing some particularly abusive C code that deliberately
-engaged in all kinds of undefined behavior. But I knew what I was doing,
-and things were working pretty well. Until I made a misstep that caused
-a lockup and, as I found upon reboot, nuked all my BIOS settings. That
-was fun. (Shout-out to @man for those fun times.)].
+Typischerweise heißt "beliebig": unerwatet nullen zu finden, Müll
+vorzufinden oder abstürzen. Aber die C Spezifikation gibt an, das
+Compiler in solchen Fällen tatsächlich _beliebigen_ Code ausgeben
+dürfen^[Zu DOS-Zeiten bevor neumodischer _memory protection_ eingeführt
+worden sind, schrieb ich an etwas besonders abenteuerlichem C, der sich
+mit allem möglichen _undefined behavior_ vergnügte. Aber ich weiss ja
+was ich tue und alles funktioniert ziemlich gut. Bis mir ein Fehlerchen
+unterlaufen ist, der alles eingefror, und,  wie ich nach einem Neustart
+feststellte, alle meine BIOS-Einstellungen löschte. (Gruss an @man, das
+waren gute Zeiten.)]
 
-Short version: don't do anything that causes undefined behavior.
-Ever^[There are a lot of things that cause undefined behavior, not just
-out-of-bounds array accesses. This is what makes the C language so
-_exciting_.].
+Kurz: nicht tun, was zu _undefined behavior_ führt. Nie^[Lauter Krempel
+erzeugt _undefined behavior_ nicht nur illegale Array Zugriffe. Das
+macht C so _aufregend_].
+
 [i[Arrays-->out of bounds]>]
 
-## Multidimensional Arrays
+## Mehrfdimensionale Arrays
 
 [i[Arrays-->multidimensional]<]
-You can add as many dimensions as you want to your arrays.
+Man kann seinen Arrays beliebig vielen Dimensionen hinzufügen.
+
 
 ``` {.c}
 int a[10];
@@ -315,11 +322,19 @@ int b[2][7];
 int c[4][5][6];
 ```
 
-These are stored in memory in [flw[row-major
-order|Row-_and_column-major_order]]. This means with a 2D array, the
-first index listed indicates the row, and the second the column.
+Die Daten werden im Speicher zeilenweise abgelegt^[An.d.Ü. englisch:  [flw[row-major
+order|Row-_and_column-major_order]] ]. D.h. das z.B. im Falle eines
+zweidimensionalem Array das erste Index die Reihe, bzw. Zeile beschreibt
+und das zweite Index die Spalte.
 
-You can also use initializers on multidimensional arrays by nesting them:
+<!-- Translator Note: May expand on the fact that the elements actually
+get layed out this way in memory. e.g. accessing the array with a single
+index. This would a) help drive home the "pointer to first element"
+point and b) can have major performance/cache implication when
+traversing multi-dim arrays--> 
+
+Man kann mehrdimensionale Arrays ganz einfach verschachtelt
+initialisieren:
 
 ``` {.c .numberLines}
 #include <stdio.h>
@@ -341,7 +356,7 @@ int main(void)
 }
 ```
 
-For output of:
+Was foglende Ausgaben erzeugt:
 
 ``` {.default}
 (0,0) = 0
@@ -356,7 +371,7 @@ For output of:
 (1,4) = 9
 ```
 
-And you can initialize with explicit indexes:
+Und man kann unter Angabe der Indices initialisieren:
 
 ``` {.c}
 // Make a 3x3 identity matrix
@@ -364,7 +379,11 @@ And you can initialize with explicit indexes:
 int a[3][3] = {[0][0]=1, [1][1]=1, [2][2]=1};
 ```
 
-which builds a 2D array like this:
+was so einen zweidimensionalen Index ergibt:
+
+<!-- Translator Note: I'd consider fully spelling out "two dimensional
+array", this may just be me personally, but 2D sets my brain into
+computer graphics mode-->
 
 ``` {.default}
 1 0 0
@@ -373,24 +392,24 @@ which builds a 2D array like this:
 ```
 [i[Arrays-->multidimensional]>]
 
-## Arrays and Pointers
+## Arrays und Zeiger
 
 [i[Arrays-->as pointers]<]
-[_Casually_] So... I kinda might have mentioned up there that arrays
-were pointers, deep down? We should take a shallow dive into that now so
-that things aren't completely confusing. Later on, we'll look at what
-the real relationship between arrays and pointers is, but for now I just
-want to look at passing arrays to functions.
+_So ganz unter uns .._ Ich hab' ein bisschen erwähnt das Arrays tief im
+Inneren nur Zeiger sind? An dieser Stelle möchte ich ein bisschen Licht
+ins dunkele bringen. Wirklich nur ein bisschen, später schauen wir uns
+die _wirklichen_ Zusammenhänge an. Aber hier erkläre ich erstmal, wir
+man Arrays an Funktionen übergibt.
 
-### Getting a Pointer to an Array
+### Zeiger an Funktionen übergeben.
 
-I want to tell you a secret. Generally speaking, when a C programmer
-talks about a pointer to an array, they're talking about a pointer _to
-the first element_ of the array^[This is technically incorrect, as a
-pointer to an array and a pointer to the first element of an array have
-different types. But we can burn that bridge when we get to it.].
+Ich verate ein kleines Geheimbis. Im allgemeinen meint eine C
+Programmiererin, wenn sie über Zeiger auf Arrays spricht genaugenommen
+einen Zeiger auf das _erste Arrayelement_^[... was aus technischer Sicht
+falsch ist, da ein Zeiger auf einen Array und ein Zeiger auf's erste
+Arrayelement einen anderen Typ haben.].
 
-So let's get a pointer to the first element of an array.
+Schnappen wir uns also einen Zeiger auf das erste Element im Array.
 
 ``` {.c .numberLines}
 #include <stdio.h>
@@ -407,7 +426,7 @@ int main(void)
 }
 ```
 
-This is so common to do in C that the language allows us a shorthand:
+Das ist so üblich, dass C uns folgende Abkürzung erlaubt:
 
 ``` {.c .numberLines}
 p = &a[0];  // p points to the array
@@ -417,23 +436,24 @@ p = &a[0];  // p points to the array
 p = a;      // p points to the array, but much nicer-looking!
 ```
 
-Just referring to the array name in isolation is the same as getting a
-pointer to the first element of the array! We're going to use this
-extensively in the upcoming examples.
+Einfach nur den Array Bezeichner losgelöst zu erwähnen entspricht also
+schon einen Zeiger auf das erste Element! Wir nutzen das ausführlich in
+kommenden Beispielen.
 
-But hold on a second---isn't `p` an `int*`? And `*p` gives us `11`, same
-as `a[0]`? Yessss. You're starting to get a glimpse of how arrays and
-pointers are related in C.
+Moment mal -- `p` ist dohc ein `int*`? Und `*p` ergibt `11`, genau wie
+`a[0]`? Genau. Langsam wird der Zusammenhang zwischen Arrays und Zeiger
+in C deutlicher.
 [i[Arrays-->as pointers]>]
 
 ### Passing Single Dimensional Arrays to Functions {#passing1darrays}
+### Eindimensionale Arrays an Funktionen übergeben {#passing1darrays}
 
 [i[Arrays-->passing to functions]<]
-Let's do an example with a single dimensional array. I'm going to write
-a couple functions that we can pass the array to that do different
-things.
+Ein Beispiel mit eindimensionalen Arrays: Ich schreibe ein paar
+Funktionen, an die wir Arrays können, die unterschiedliche Verhalten
+verdeutlichen.
 
-Prepare for some mind-blowing function signatures!
+Bereite Dich auf ein paar sensationelle Funktionssignaturen vor!
 
 ``` {.c .numberLines}
 #include <stdio.h>
@@ -469,8 +489,7 @@ int main(void)
 }
 ```
 
-All those methods of listing the array as a parameter in the function
-are identical.
+Alle drei Arten Arrays zu übergeben sind identisch.
 
 ``` {.c}
 void times2(int *a, int len)
@@ -478,39 +497,43 @@ void times3(int a[], int len)
 void times4(int a[5], int len)
 ```
 
-In usage by C regulars, the first is the most common, by far.
+Die erste Übergabe Art ist bei Eingeweihten mit Abstand am beliebtesten.
 
-And, in fact, in the latter situation, the compiler doesn't even care
-what number you pass in (other than it has to be greater than zero^[C11
-§6.7.6.2¶1 requires it be greater than zero. But you might see code out
-there with arrays declared of zero length at the end of `struct`s and
-GCC is particularly lenient about it unless you compile with
-`-pedantic`. This zero-length array was a hackish mechanism for making
-variable-length structures. Unfortunately, it's technically undefined
-behavior to access such an array even though it basically worked
-everywhere. C99 codified a well-defined replacement for it called
-_flexible array members_, which we'll chat about later.]). It doesn't
-enforce anything at all. 
+Im letzten Beispiel ist es tatsächlich so, dass es dem Compiler egal
+ist, welche Zahl beim Array steht (abgesehen, dass sie größer null sein
+muss^[C11 §6.7.6.2¶1 erfordert, dass die Zahl größer Null sein muss.
+Aber man sieht gelegentlich Code mit Arrays der Länge Null als
+abschliessendes `struct` Element. GCC ist da besonders grosszügig wenn
+man nicht mit dem `-pedantic` Flag kompiliert. Solch ein
+Länge-Null-Array war eine Bastelei, um Datenstrukturen von variabeler
+Länge zu erzeugen. Bedauerlicherweise handelt es sich dabei im
+_undefined behavior_ obwohl das eigentlich überall funktioniert. Ab C99
+gibt es einen wohl-definierten Ersatz names _flexible array member_ die
+wird später uns noch vornehmen]
 
 Now that I've said that, the size of the array in the function
 declaration actually _does_ matter when you're passing multidimensional
 arrays into functions, but let's come back to that.
 [i[Arrays-->passing to functions]>]
 
-### Changing Arrays in Functions
+### Arrays in Funktoinen modifizieren
 
 [i[Arrays-->modifying within functions]<]
-We've said that arrays are just pointers in disguise. This means that if
-you pass an array to a function, you're likely passing a pointer to the
-first element in the array.
+Wie gesagt sind Arrays nur verkappte Zeiger. Wenn ein Array an eine
+Funktion übergeben wird, heisst das eigentlich das ein Zeiger auf das
+erste Arrayelement übergeben wird.
 
-But if the function has a pointer to the data, it is able to manipulate
-that data! So changes that a function makes to an array will be visible
-back out in the caller.
+<!-- Translator Note: This means that if
+you pass an array to a function, you're likely passing a pointer ...
+"likely"? -->
 
-Here's an example where we pass a pointer to an array to a function,
-the function manipulates the values in that array, and those changes are
-visible out in the caller.
+Aber wenn die Funktionen einen Zeiger auf die Daten erhält kann sie die
+Daten auch verändern! Änderungen, die eine Funktion an Arrays vornimmt
+sind also auch für den Aufrufer sichtbar.
+
+Hier ein Beispiel in dem wir einen Zeiger auf ein Array an eine Funktion
+übergeben, welche die Wert im Array manipuliert. Und diese Änderungen
+sind für den Aufrufer sichtbar.
 
 ``` {.c .numberLines}
 #include <stdio.h>
@@ -537,24 +560,24 @@ int main(void)
 }
 ```
 
-Even though we passed the array in as parameter `a` which is type
-`int*`, look at how we access it using array notation with `a[i]`!
-Whaaaat. This is totally allowed.
+Obwohl wir den Array als Parameter `a` vom Typ `int*` übergeben haben
+können wir mittels Arraynotation auf ihn zugreifen.. Das ist erlaubt.
 
-Later when we talk about the equivalence between arrays and pointers,
-we'll see how this makes a lot more sense. For now, it's enough to know
-that functions can make changes to arrays that are visible out in the
-caller.
+Wenn wir später über die Äquivalenz von Arrays und Zeigern sprechen wird
+das mehr Sinn ergeben. An dieser Stelle reicht es zu wissen, dass
+Änderungen, die von Funktionen an Arrays vorgenommen werden, draußen
+beim Aufrufer sichtbar sind.
 [i[Arrays-->modifying within functions]>]
 
-### Passing Multidimensional Arrays to Functions
+### Multidimensionale Arrays an Funktionen übergeben
 
 [i[Arrays-->passing to functions]<]
-The story changes a little when we're talking about multidimensional
-arrays. C needs to know all the dimensions (except the first one) so it
-has enough information to know where in memory to look to find a value.
+Die Story verhält sich ein bisschen anders, wenn sie sich um
+mehrdimensionale Arrays dreht. C muss über die ganzen Dimensionen
+Bescheid wissen (bis auf die erste) um ermitteln zu können, wo im
+Speicher sich ein Wert befindet.
 
-Here's an example where we're explicit with all the dimensions:
+Hier ein Beispiel, in dem wir explizit alle Dimensionen angeben:
 
 ``` {.c .numberLines}
 #include <stdio.h>
@@ -579,20 +602,39 @@ int main(void)
 }
 ```
 
-But in this case, these two^[This is also equivalent: `void
-print_2D_array(int (*a)[3])`, but that's more than I want to get into
-right now.] are equivalent:
+In dem Fall wären die folgenden beiden Beispiele äquivalent^[Auch: `void
+print_2D_array(int (*a)[3]` geht, aber das geht an dieser Stelle zu
+weit.]:
 
 ``` {.c}
 void print_2D_array(int a[2][3])
 void print_2D_array(int a[][3])
 ```
 
-The compiler really only needs the second dimension so it can figure out
-how far in memory to skip for each increment of the first dimension. In
-general, it needs to know all the dimensions except the first one.
+Der Compiler muss eigentlich nur die zweite Dimension kennen. Daran kann
+er erkennen, wieviel Speicher er für jede Erhöhung der ersten Dimension
+überspringen muss um auf ein Element zuzugreifen. Verallgemeinert auf
+mehrere Dimensionen kann man sagen, dass alle Dimensionen bis auf die
+erste bekannt sein müssen.
 
-Also, remember that the compiler does minimal compile-time bounds
-checking (if you're lucky), and C does zero runtime checking of bounds.
-No seat belts! Don't crash by accessing array elements out of bounds!
+<!-- Translator note: 
+
+:The compiler really only needs the second dimension so it can figure out
+:how far in memory to skip for each increment of the first dimension. In
+:general, it needs to know all the dimensions except the first one.
+
+This is related to my previous note about multidim arrays and layout in
+memory, it might be helpful for understanding here to show that you can
+access the multidim array as a one.dimensional one but would need the
+magnitudes of the dimensions to calculate the index.
+
+This may also be confusing. 
+
+-->
+
+Nicht vergessen: der Compiler beschränkt sich auf minimale Checks was
+Array Überschreitungen angeht (und das auch nur, wenn Du 
+Glück hast). Zur Laufzeit gibt es gar keinen Schutz davor! Denk immer
+dran, dass es keinen Anschnallgurt gibt, vermeide also Unfälle mit
+längenüberschreitungen bei Arrays!
 [i[Arrays-->passing to functions]>] [i[Arrays]>]
