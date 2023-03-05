@@ -1,0 +1,126 @@
+
+When we do any kind of I/O in C, we do so through a piece of data that
+you get in the form of a `FILE*` type. This `FILE*` holds all the
+information needed to communicate with the I/O subsystem about which
+file you have open, where you are in the file, and so on.
+
+The spec refers to these as _streams_, i.e. a stream of data from a file
+or from any source. I'm going to use "files" and "streams"
+interchangeably, but really you should think of a "file" as a special
+case of a "stream". There are other ways to stream data into a program
+than just reading from a file.
+
+We'll see in a moment how to go from having a filename to getting an
+open `FILE*` for it, but first I want to mention three streams that are
+a
+
+
+
+CHAT
+
+Wenn wir in C irgendeine Art von E/A durchführen, tun wir dies durch ein
+Datenstück, das in Form eines FILE*-Typs vorliegt. Dieser FILE* enthält alle
+Informationen, die benötigt werden, um mit dem E/A-Subsystem zu kommunizieren,
+welches die geöffnete Datei ist, wo sich diese in der Datei befindet usw.
+
+Die Spezifikation bezieht sich auf diese als Streams, also einen Strom von
+Daten aus einer Datei oder aus einer anderen Quelle. Ich werde "Dateien" und
+"Streams" austauschbar verwenden, aber eigentlich sollten Sie bei einer "Datei"
+an einen speziellen Fall eines "Streams" denken. Es gibt andere Möglichkeiten,
+Daten in ein Programm zu streamen, als nur aus einer Datei zu lesen.
+
+Gleich werden wir sehen, wie man von einem Dateinamen zu einem geöffneten FILE*
+gelangt, aber zuerst möchte ich drei Streams erwähnen, die bereits für Sie
+geöffnet sind und bereit zur Verwendung stehen.
+
+
+DEEPL
+
+ 
+Wenn wir in C irgendeine Art von E/A durchführen, tun wir dies über ein Stück
+Daten, das Sie in Form eines `FILE*`-Typs erhalten. Diese `FILE*` enthält alle
+Informationen, die benötigt werden, um mit dem E/A-Subsystem darüber zu
+kommunizieren, welche Datei Sie geöffnet haben, wo Sie sich in der Datei
+befinden und so weiter.
+ 
+In der Spezifikation werden diese als _Streams_ bezeichnet, d.h. ein Datenstrom
+aus einer Datei oder aus einer beliebigen Quelle. Ich werde "Dateien" und
+"Datenströme" austauschbar verwenden, aber eigentlich sollten Sie eine "Datei"
+als einen Spezialfall eines Fall eines "Streams" betrachten. Es gibt andere
+Möglichkeiten, Daten in ein Programm zu übertragen als nur aus einer Datei zu
+lesen.
+ 
+Wir werden gleich sehen, wie man von einem Dateinamen zu einer offene `DATEI*`
+zu bekommen, aber zuerst möchte ich drei Streams erwähnen, die bereits geöffnet
+und einsatzbereit sind.DE
+
+ICH 
+
+Jegliche Art von I/O in C findet durch eine Datenstruktur vom Typ `FILE
+*` statt. Dieser `FILE*` beinhaltet alle notwendigen Informationen, um
+sich mit dem I/O Subsystem über offene Dateien, wo man sich innerhalb
+von Dateien befindet, usw. auszutauschen.
+
+Die Spezifikation bezeichnet diese als _stream_ (dt. Datenströme), d.h.
+eine Strom Daten aus einer Datei oder irgendeiner anderen Quelle. Ich
+werde "file" und "stream" austauschbar verwenden (An.d.Ü. vielleicht
+würfel ich auch hier und da "Datei"), aber eigentlich sollte man Dateien als
+spezifische Ausprägung von _Streams_ betrachten. Es gibt viele andere
+Wege, Daten in ein Programm einströmen zu lassen, als Dateien zu lesen.
+
+Gleich sehen wir, wie man mit einem Dateinamen ein `FILE*` öffnet, aber
+erst möchte ich noch drei _Streams_ vorstellen, die bereits geöffnet
+vorliegen und verwendet werden können.
+
+
+
+Orig 
+We've actually been using these implicitly already, it turns out. For
+example, these two calls are the same:
+
+Deepl (Spatial!)
+
+Wie sich herausstellte, haben wir diese bereits implizit verwendet. Für
+zum Beispiel sind diese beiden Aufrufe die gleichen:
+
+ChatGPT
+Tatsächlich haben wir diese bereits implizit genutzt, wie es sich herausstellt. Diese beiden Aufrufe sind zum Beispiel gleich:
+
+Me
+Wie sich herausstellt, haben wir diese schon implizit benutzt. Folgende
+beiden Aufrufe sind identisch:
+
+
+Orig
+Also you'll notice that both `stdout` and `stderr` go to the screen.
+While this seems at first either like an oversight or redundancy, it
+actually isn't. Typical operating systems allow you to _redirect_ the
+output of either of those into different files, and it can be convenient
+to be able to separate error messages from regular non-error output.
+
+Deepl
+
+Außerdem werden Sie feststellen, dass sowohl `stdout` als auch `stderr` auf den
+Bildschirm gehen. Obwohl dies auf den ersten Blick wie ein Versehen oder eine
+Redundanz aussieht, ist es ist es eigentlich nicht. Typische Betriebssysteme
+erlauben es Ihnen, die Ausgabe in verschiedene Dateien umzuleiten, und es kann
+praktisch sein in der Lage zu sein, Fehlermeldungen von der regulären
+Nicht-Fehler-Ausgabe zu trennen.
+
+Chat
+
+Außerdem werden Sie feststellen, dass sowohl stdout als auch stderr auf den
+Bildschirm ausgegeben werden. Obwohl dies zunächst entweder wie ein Versehen
+oder eine Redundanz erscheint, ist es tatsächlich keines von beiden. Typische
+Betriebssysteme erlauben es, die Ausgabe von einem der beiden in verschiedene
+Dateien umzuleiten, und es kann praktisch sein, Fehlermeldungen von regulären
+nicht-fehlerhaften Ausgaben trennen zu können.
+
+Me
+Dir wird aufgefallen sein, dass sowohl `stdout` als auch `stderr` auf
+dem Bildschirm landen. Das wirkt erstmal redundant oder überflüssig, ist
+es aber nicht. Betriebssysteme erlauben es typischerweise die Ausgaben
+der beiden _Streams_ in unterschiedliche Dateien umzuleiten, was
+hilfreich sein kann, um Fehler von den gewünschten Ausgabedaten zu
+unterscheiden.
+

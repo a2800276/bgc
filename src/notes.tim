@@ -54,7 +54,29 @@ oder
 
 	Was wird also benutzt, um auf Fehler zuzugreifen, Punkt oder Pfeil?
 
+ORIGINAL
+The spec refers to these as _streams_, i.e. a stream of data from a file
+or from any source. I'm going to use "files" and "streams"
+interchangeably, but really you should think of a "file" as a special
+case of a "stream". There are other ways to stream data into a program
+than just reading from a file.
 
+DEEPL 
+
+In der Spezifikation werden diese als _Streams_ bezeichnet, d.h. ein
+Datenstrom aus einer Datei oder aus einer beliebigen Quelle. Ich werde
+"Dateien" und "Datenströme" austauschbar verwenden, aber eigentlich sollten Sie
+eine "Datei" als einen Spezialfall eines Fall eines "Streams" betrachten. Es
+gibt andere Möglichkeiten, Daten in ein Programm zu übertragen als nur aus
+einer Datei zu lesen.
+
+CHAT 
+
+Die Spezifikation bezieht sich auf diese als Streams, also einen Strom von
+Daten aus einer Datei oder aus einer anderen Quelle. Ich werde "Dateien" und
+"Streams" austauschbar verwenden, aber eigentlich sollten Sie bei einer "Datei"
+an einen speziellen Fall eines "Streams" denken. Es gibt andere Möglichkeiten,
+Daten in ein Programm zu streamen, als nur aus einer Datei zu lesen.
 
 - exagerated Spatial Coherence
 
