@@ -8,6 +8,7 @@
 - Übersetzen oder nicht?
 
 - size : German is larger
+    : cf Gutenberg Aristotle, Balzac, Brentano, Brod, Buechner, Busch, Carroll, checkhov, clausewitz, Cooper, Curie, Defoe, Descartes, Dickens, Doeblin, Dostozevskz, Du Bois, Engels, Flaubert, Fontane, Freud 
 
 - weird feeling of translating I, psychology
 `enum`s können selbstverständlich auch ge`typedef`t werden, aber ich
@@ -20,16 +21,39 @@ persönlich mag das nicht.^[Anmerkung des Übersetzers: ich schon.]
 - minimal translation unit - sentence paragraph. Deepl gets confused
 
 
-- typisch:
+- typisch (deepl):
 
-if values are omitted, numbering continues counting in the positive
-direction from whichever value was last specified. For example:
+	if values are omitted, numbering continues counting in the positive
+	direction from whichever value was last specified. For example:
 
-Wenn Werte weggelassen werden, wird die Nummerierung in positiver Richtung
-Richtung weiter, je nachdem, welcher Wert zuletzt angegeben wurde. Zum Beispiel:
+	Wenn Werte weggelassen werden, wird die Nummerierung in positiver Richtung
+	Richtung weiter, je nachdem, welcher Wert zuletzt angegeben wurde. Zum Beispiel:
 
-werden Werte ausgelassen, wird die Nummerierung hinter dem zuletzt
-vorgegebenen Wert in positiver Reihenfolge weitergeführt. Zum Beispiel:
+	werden Werte ausgelassen, wird die Nummerierung hinter dem zuletzt
+	vorgegebenen Wert in positiver Reihenfolge weitergeführt. Zum Beispiel:
+
+oder
+
+
+	And that works! But it's a little clunky to type all those parens and
+	the asterisk. C has some syntactic sugar called the _arrow operator_
+	that helps with that.
+
+	Und das funktioniert! Aber es ist ein bisschen umständlich, all diese
+	Parens und das Sternchen. C hat einen syntaktischen Zucker namens
+	_arrow operator_ der dabei hilft.
+
+	Und das funktioniert! Ist aber ein bisschen umständlich mit dem ganzen
+	Klammer- und Sternchengeraffel. Um Abhilfe zu schaffen gibt dafür in C
+	eine Kurzform, den Pfeil Operator.
+oder
+	So when accessing fields, when do we use dot and when do we use arrow?
+	
+	Wenn wir also auf Felder zugreifen, wann verwenden wir einen Punkt und
+	wann einen Pfeil?
+
+	Was wird also benutzt, um auf Fehler zuzugreifen, Punkt oder Pfeil?
+
 
 
 - exagerated Spatial Coherence
@@ -75,6 +99,7 @@ nicht über die Lippen gehen.
 
 --- Non Translation, bloggy stuff
 
+- structs exists, arrays are syntactic sugar. "Everything is copyied in function calls"
 - stack vs. heap, memory layout. Printing addresses of variables, sp, implmenting own stacktrace.
 - stack vs. heap: read stack variables that happen to still be on the heap, read bzond arrays, read data left laying around on the heap (security)
 - memory layout: addresses of function, stack, heap, static and non static global vars.
