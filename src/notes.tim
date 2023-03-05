@@ -13,6 +13,10 @@
 `enum`s können selbstverständlich auch ge`typedef`t werden, aber ich
 persönlich mag das nicht.^[Anmerkung des Übersetzers: ich schon.]
 
+- psychology neurology II: used to switching Keyboard layout. ZY are switch, mz brain automatically remaps my fingers depending on language. Typing `size_t` on a German keyboard is near enough impossible for me.
+( how in the world do people use a German keyboard to program!? Let alone use vi)
+
+
 - minimal translation unit - sentence paragraph. Deepl gets confused
 
 
@@ -50,7 +54,24 @@ Deutsch & English
 - undefined behavior
 - memory protection / mmu - Speicherschutz, Speicherverwaltungseinheit
 
+§§§ Consistency dt. eng.
 
+Ich bin unentschlossen, welche Begriffe ein dt. Pedant finden sollen (Zeiger)
+und welche englisch (Array) oder technisch (struct, enum, ternary operator)
+verwendet werden. Dabei lasse ich mich im wesentlichen von meinem Gefühl und
+Erfahrung leiten. Ich versuche allerdings die Begriffe Konsistent zu benutzen,
+wobei das auch nicht immer klappt. Bei Strings z.B. finde ich Zeichenkette
+durchaus einen brauchbaren Begriff. Aber Zeichenkettenliteral will mir einfach
+nicht über die Lippen gehen.
+
+# Terms
+- Backslash
+- to escape
+- format specifier - Umwandlungsbezeichner
+- undefined behavior
+
+§ Bad Jokes:
+- Was haben ein Progammierer nach einer langen Nacht und _undefined bahavior_ gemeinsam? Beide werden, je nach Umgebung, sehr warhscheinlich abstürzen?
 
 --- Non Translation, bloggy stuff
 
@@ -59,3 +80,6 @@ Deutsch & English
 - memory layout: addresses of function, stack, heap, static and non static global vars.
 - types : convert float & int ...
 - multi dimensional arrays, performance: row-major vs column-major order, traversal.
+- array literals with index
+
+
