@@ -4,7 +4,6 @@
 -->
 
 # File Input/Output (Ein- und Ausgabe) 
-
 [i[File I/O]<]
 Wir haben bereits ein paar Beispiel von I/O mittels der Konsole
 (Bildschirm und Tastatur) mit `scanf()` and
@@ -170,27 +169,31 @@ Das [i[`FILE*` type]]`FILE*` verwaltet unsere Position innerhalb der
 Datei. Nachfolgende Aufrufe von `fgetc()` würden das nächste Zeichen aus
 der Datei auslesen und dann das nächste usw. bis ans Ende.
 
-Das klingt nervid, Schauen wir, ob man das vereinfachen kann.
+Das klingt nervig, schauen wir, ob man das auch einfacher geht.
 
 [i[File I/O-->text files, reading]>]
 
 ## End of File: `EOF`
 
 [i[`EOF` end of file]<]
-There is a special character defined as a macro: `EOF`. This is what
-`fgetc()` will return when the end of the file has been reached and
-you've attempted to read another character.
+Es gibt ein besonders Zeichen names `EOF`, das als Macro definiert ist.
+Es handelt sich um das Zeichen, das `fgetc()` zurück gibt, wenn es am
+Ende einer Datei angelangt ist, und man versucht, weiterzulesen.
 
-How about I share that Fun Fact™, now. Turns out `EOF` is the reason why
-`fgetc()` and functions like it return an `int` instead of a `char`.
-`EOF` isn't a character proper, and its value likely falls outside the
-range of `char`. Since `fgetc()` needs to be able to return any byte
-**and** `EOF`, it needs to be a wider type that can hold more values. so
-`int` it is. But unless you're comparing the returned value against
-`EOF`, you can know, deep down, it's a `char`.
+<!-- Translator Note: have macros been introduced ? -->
 
-All right! Back to reality! We can use this to read the whole file in a
-loop.
+Wir wär's mit einem weiteren Fun Fact? Es stellt sich herruas, das `EOF`
+die Ursache dafür ist, dass `fgetc()` und Freunde ein `int` zurückgeben
+müssen statt einem `char`. Bei `EOF` handelt es sich nicht wirklich um
+ein richtiges Zeichen. Sein Wert liegt nicht im Bereich von `char`, da
+`fgetc()` in der Lage sein muss, sowohl beliebige Byte-Werte als auch
+`EOF` zurückzugeben, muss der Rückgabetyp umfangreicher sein, um mehr
+Werte enthalten zu können. Also `int`. Du kannst Dich aber getrost
+darauf verlassen, dass mit Ausnahme von Vergleichen mit `EOF`, es sich
+immer um `char`s handeln wird.
+
+Zurück in die Gegenwart! Mit diesem Wissen gewappnet lesen wir nun die
+gesammte Datei in einer Schleife.
 
 [i[`fopen()` function]<]
 [i[`fgetc()` function]<]
@@ -214,39 +217,49 @@ int main(void)
 [i[`fopen()` function]>]
 [i[`fclose()` function]>]
 
-(If line 10 is too weird, just break it down starting with the
-innermost-nested parens. The first thing we do is assign the result of
-`fgetc()` into `c`, and _then_ we compare _that_ against `EOF`. We've
-just crammed it into a single line. This might look hard to read, but
-study it---it's idiomatic C.)
+(Falls Dir Zeile 10 zu komisch vorkommen, versuche sie von innen nach
+außen aufzubrechen, angefangen bei der innersten Klammer. Als erstes
+weisen wir den Rückgabewert von `fgetc()` der Variabel `c` zu and
+vergleich _anschliessend_ das Ergbenis mit `EOF`. Wir haben das halt
+alles in eine Zeile gestopft. Das sieht jetzt noch vielleicht
+umständlich aus, aber gewöhne Dich dran -- es handelt sich um
+idiomatisches C.)
+
 [i[`fgetc()` function]>]
 
-And running this, we see:
+Wenn wir das nun laufen lassen, erhalten wir:
 
 ``` {.default}
 Hello, world!
 ```
 
-But still, we're operating a character at a time, and lots of text files
-make more sense at the line level. Let's switch to that.
+Allerdings schauen wir uns immer noch jedes Zeichen einzeln an, und die
+meisten Text Dateien betrachtet man sinnvoller zeilenweisen. Probieren
+wir das mal.
 [i[`EOF` end of file]>]
 
-### Reading a Line at a Time
+### Zeilenweise lesen
 
 [i[File I/O-->line by line]<]
-So how can we get an entire line at once? [i[`fgets()`
-function]<]`fgets()` to the rescue! For arguments, it takes a pointer to
-a `char` buffer to hold bytes, a maximum number of bytes to read, and a
-`FILE*` to read from. It returns `NULL` on end-of-file or error.
-`fgets()` is even nice enough to NUL-terminate the string when its
-done^[If the buffer's not big enough to read in an entire line, it'll
-just stop reading mid-line, and the next call to `fgets()` will continue
-reading the rest of the line.].[i[`fgets()` function]>]
 
-Let's do a similar loop as before, except let's have a multiline file
-and read it in a line at a time.
+Wie kommt man also an eine ganze Textzeile? Mit [i[`fgets()`
+function]<]`fgets()`! Zu den Argumenten: die Funktion erwartet einen
+Zeiger auf ein `char` Buffer um die gelesenen Bytes zu halten, die
+maximale Anzahl Bytes, die gelesen werden dürfen und ein `FILE*`, der
+gelesen werden soll. Der Rückgabewert ist `NULL` wenn das Ende der Datei
+erreicht ist oder ein Fehler auftritt. `fgets()` ist sogar so
+zuvorkommend, dass es abschliessend die gelesene Zeichenkette mit `NUL`
+terminiert^[Sollte der Puffer nicht ausreichen, um die ganze Zeile
+einzulesen, macht es an dieser Stelle eine Pause und der nächste Aufruf
+von `fgets()` setzt an der Stelle wieder an, weiterzulesen.].
+[i[`fgets()` function]>]
 
-Here's a file `quote.txt`:
+<!-- Translator Note: shouldn't this read "parameter"? -->
+
+Schreiben wir jetzt eine ähnliche Schleife wir eben, nur, dass wir
+zeilenweise eine mehrzeilige Datei lesen.
+
+Hier die Datei: `quote.txt`:
 
 ``` {.default}
 A wise man can learn more from
@@ -255,8 +268,8 @@ can learn from a wise answer.
                   --Bruce Lee
 ```
 
-And here's some code that reads that file a line at a time and prints
-out a line number before each one:
+Und hier ist ein bisschen Code, der die Datei zeilenweise liest und jede
+Zeile durchnummeriert ausgibt:
 
 [i[`fgets()` function]<]
 ``` {.c .numberLines}
@@ -278,7 +291,7 @@ int main(void)
 ```
 [i[`fgets()` function]>]
 
-Which gives the output:
+Das Ergebnis:
 
 ``` {.default}
 1: A wise man can learn more from
@@ -288,17 +301,18 @@ Which gives the output:
 ```
 [i[File I/O-->line by line]>]
 
-## Formatted Input
+## Formattierte Eingabe
 
 [i[File I/O-->formatted input]<]
-You know how you can get formatted output with `printf()` (and, thus,
-`fprintf()` like we'll see, below)?
+Erinnerst Du Dich, wie wir mit `printf()` Ausgaben formatiert haben (und
+in Erweiterung mit `fprintf()`, wie wir noch sehen werden?)
 
 [i[`fscanf()` function]<]
-You can do the same thing with `fscanf()`.
+Dasselbe geht mit `fscanf()`
 
-Let's have a file with a series of data records in it. In this case,
-whales, with name, length in meters, and weight in tonnes. `whales.txt`:
+Schauen wir uns eine Datei mit einer Reihe von Datenpunkten an. In
+diesem Fall handelt es sich um Wale. Enthalten sind ihre Namen, Länge in
+Metern und Gewicht in Tonnen. `whales.txt`:
 
 ``` {.default}
 blue 29.9 173
@@ -307,13 +321,15 @@ gray 14.9 41
 humpback 16.0 30
 ```
 
-Yes, we could read these with [i[`fgets()` function]]`fgets()` and then parse the
-string with `sscanf()` (and in some ways that's more resilient against
-corrupted files), but in this case, let's just use `fscanf()` and pull
-it in directly.
+Wir _könnten_ das Ganze mit [i[`fgets()` function]]`fgets()` einlesen
+und das Ergebnis mit`sscanf()` parsen (und in mancher Hinsicht wäre
+dieses Vorgehen robuster im Umgang mit Fehlern), aber für dieses
+Beispiel benutzten wir einfach `fscanf()` and lesen die Daten
+unvermittelt.
 
-The `fscanf()` function skips leading whitespace when reading, and
-returns `EOF` on end-of-file or error.
+`fscanf()` überspringt anführende Leerzeichen (eng. Whitespace) beim
+lesen und gibt `EOF` zurück, wenn das Dateiende erreicht ist oder ein
+Fehler auftritt. 
 
 ``` {.c .numberLines}
 #include <stdio.h>
@@ -335,7 +351,7 @@ int main(void)
 ```
 [i[`fscanf()` function]>]
 
-Which gives the result:
+Das Ergbenis:
 
 ``` {.default}
 blue whale, 173 tonnes, 29.9 meters
@@ -345,22 +361,24 @@ humpback whale, 30 tonnes, 16.0 meters
 ```
 [i[File I/O-->formatted input]>]
 
-## Writing Text Files
+## In Text Dateien schreiben
 
 [i[File I/O-->text files, writing]<]
 [i[`fputc()` function]<]
 [i[`fputs()` function]<]
 [i[`fprintf()` function]<]
-In much the same way we can use `fgetc()`, `fgets()`, and `fscanf()` to
-read text streams, we can use `fputc()`, `fputs()`, and `fprintf()` to
-write text streams.
 
-To do so, we have to `fopen()` the file in write mode by passing `"w"`
-as the second argument. Opening an existing file in `"w"` mode will
-instantly truncate that file to 0 bytes for a full overwrite.
+So wie wir  `fgetc()`, `fgets()`, and `fscanf()` verwenden, um aus
+Text _Streams_ zu lesen, kann man `fputc()`, `fputs()`, and `fprintf()`
+verwenden, um auf Sie zu schreiben.
 
-We'll put together a simple program that outputs a file `output.txt`
-using a variety of output functions.
+Dazu müssen wir an `fopen()` ein `"w"` als zweites Argument übergeben,
+um die Datei zu schreiben (eng. write) zu öffnen. Öffnet man eine
+bestehende Datei im `"w"` Modus führt dazu, dass diese auf eine Länge
+von 0 Bytes gekürzt wird und somit vollständig überschrieben.
+
+Wir schmeissen ein einfaches Beispiel zusamen, das mittels verschiedener
+Funktionen in `output.txt` schreibt.
 
 ``` {.c .numberLines}
 #include <stdio.h>
@@ -384,7 +402,7 @@ int main(void)
 [i[`fputs()` function]>]
 [i[`fprintf()` function]>]
 
-And this produces a file, `output.txt`, with these contents:
+Das erzeugt die Datei, `output.txt` mit dem folgenden Inhalt:
 
 ``` {.default}
 B
@@ -392,45 +410,47 @@ x = 32
 Hello, world!
 ```
 
-Fun fact: since `stdout` is a file, you could replace line 8 with:
+Fun fact: da es sich bei `stdout` auch um eine Datei handelt, könnte man
+Zeile 8 mit:
 
 ``` {.c}
 fp = stdout;
 ```
 
-and the program would have outputted to the console instead of to a
-file. Try it!
+ersetzten und das Programm hätte die Ausgabe auf die Konsole geschrieben
+statt in eine Datei. Probier's man.
 [i[File I/O-->text files, writing]>]
 
-## Binary File I/O
+## Binary I/O mit Dateien
 
 [i[File I/O-->binary files]<]
-So far we've just been talking text files. But there's that other beast
-we mentioned early on called _binary_ files, or binary streams.
 
-These work very similarly to text files, except the I/O subsystem
-doesn't perform any translations on the data like it might with a text
-file. With binary files, you get a raw stream of bytes, and that's all.
+Bis jetzt sprechen wir nur über Text Dateien. Wir hatten aber vorhin
+noch ein Tierchen erwähnt, nämlich _Binärdateien_ oder _binary Streams_.
 
-The big difference in opening the file is that you have to add a `"b"`
-to the mode. That is, to read a binary file, open it in `"rb"` mode. To
-write a file, open it in `"wb"` mode.
+Diese funktionieren ähnlich wie Text Dateien, nur das keinerlei Änderungen
+vom I/O Subsystem vorgenommen werden, wie es mit Textdateien vorkommen
+kann. Bei Binärdatein bekommt man rohe Bytes im _Stream_, das war's.
 
-Because it's streams of bytes, and streams of bytes can contain NUL
-characters, and the NUL character is the end-of-string marker in C, it's
-rare that people use the `fprintf()`-and-friends functions to operate on
-binary files.
+Bei Öffnen muss man nur beachten, dass man dem "Mode" ein `"b"` anfügt.
+D.h. zu Lesen einer Binärdatei muss man sie mit `"rb"` öffnen, zu
+Schreiben mit `"wb"`.
 
-[i[`fwrite()` function]<]
-Instead the most common functions are [i[`fread()` function]]`fread()`
-and `fwrite()`. The functions read and write a specified number of bytes
-to the stream.
+Da es sich um es sich um einen _Stream_ Bytes handelt der NUL Zeichen
+enthalten kann und NUL Zeichen wiederrum in C als
+Zeichenkettenterminierung dienen, wird die `fprintf()`-usw-Funktionen
+nur selten mit Binärdateien verwendet.
 
-To demo, we'll write a couple programs. One will write a sequence of
-byte values to disk all at once. And the second program will read a byte
-at a time and print them out^[Normally the second program would read all
-the bytes at once, and _then_ print them out in a loop. That would be
-more efficient. But we're going for demo value, here.].
+[i[`fwrite()` function]<] Die üblichsten Funktionen sind stattdessen
+[i[`fread()` function]]`fread()` und `fwrite()`, die eine vorgegebene
+Anzahl Bytes in den _Stream_ schreiben. 
+
+Zu Demonstrationszwecken schreiben wir ein paar Programme: Eins schreibt
+eine Bytesequenz am Stück in eine Datei. Das zweite liest eine Datei
+byteweise und gibt sie Byte für Byte aus^[Effizienter wäre es, im
+zweiten Programm die gesammten am Stück zu lesen und sie _anschließend_
+in einer Schleife auszugeben. Das zweite Programm soll als Beispiel
+dienen.].
 
 ``` {.c .numberLines}
 #include <stdio.h>
@@ -456,38 +476,39 @@ int main(void)
 ```
 [i[`fwrite()` function]>]
 
-Those two middle arguments to `fwrite()` are pretty odd. But basically
-what we want to tell the function is, "We have items that are _this_
-big, and we want to write _that_ many of them." This makes it convenient
-if you have a record of a fixed length, and you have a bunch of them in
-an array. You can just tell it the size of one record and how many to
-write. 
+Die beide mittleren Argumente von `fwrite()` stechen ein bisschen raus.
+Im Grunde genommen wollen wir der Funktion folgendes mitteilen: "Wir
+wollen Elemente ausgeben die _so_ groß sind, und zwar _so_ viele davon."
+So kann man ohne Umstände ein Array mit gleichgroßen Elementen am Stück
+wegschreiben. Man muss nur die Größe und Anzahl angeben.
 
-In the example above, we tell it each record is the size of a `char`,
-and we have 6 of them.
+Im angeführten Beispiel geben wir an, dass jeder Eintrag so gross wie
+`char` ist, und es sechs Stück davon gibt.
 
-Running the program gives us a file `output.bin`, but opening it in a
-text editor doesn't show anything friendly! It's binary data---not text.
-And random binary data I just made up, at that!
+Das Ergebnis von Programm ist eine Datei names `output.bin`, die, wenn
+man die in einem Texteditor öffnet uns nicht gerade freundlich grüßt. Es
+handelt sich um Binärdaten, nicht Text, und noch dazu um zufällige
+Daten, die ich mir ausgedacht habe.
 
-If I run it through a [flw[hex dump|Hex_dump]] program, we can see the
-output as bytes:
+
+Mit einem [flw[hex dump|Hex_dump]] Programm können wir uns die Rohdaten
+anschauen:
 
 ``` {.default}
 05 25 00 58 ff 0c
 ```
 
-And those values in hex do match up to the values (in decimal) that we
-wrote out.
+Und es stellt sich herraus, dass die Wert in Hexadezimal mit den
+geschrieben Werten (in Dezimalschreibweise) übereinstimmen.
 
-But now let's try to read them back in with a different program. This
-one will open the file for binary reading (`"rb"` mode) and will read
-the bytes one at a time in a loop.
+Veruschen wir sie nun mit einem anderen Programm wieder einzulesen. Das
+muss die Datei im Binäremodus zu lesen öffnen (`"rb"` Mode) und ließt
+byteweise in einer Schleife:
 
 [i[`fread()` function]<]
-`fread()` has the neat feature where it returns the number of bytes
-read, or `0` on EOF. So we can loop until we see that, printing numbers
-as we go.
+`fread()` hat die nützliche Eigenschaft, die Anzahl gelesener Bytes
+zurückzugeben. Oder `0` am Dateiende. Die Schleife kann also laufen, bis
+wir die die Null sehen.
 
 ``` {.c .numberLines}
 #include <stdio.h>
@@ -505,7 +526,7 @@ int main(void)
 ```
 [i[`fread()` function]>]
 
-And, running it, we see our original numbers!
+Und siehe da, unsere urspünglichen Zahlen!
 
 ``` {.default}
 5
@@ -516,35 +537,37 @@ And, running it, we see our original numbers!
 12
 ```
 
-Woo hoo!
+Wuhu!
 [i[File I/O-->binary files]>]
 
-### `struct` and Number Caveats
+### Vorsicht bei `struct`s und Zahlen!
 
 [i[File I/O-->with `struct`s]<]
-As we saw in the `struct`s section, the compiler is free to add padding
-to a `struct` as it sees fit. And different compilers might do this
-differently. And the same compiler on different architectures could do
-it differently. And the same compiler on the same architectures could do
-it differently.
+Wie wir im Abschnitt über `struct`s gesehen habe, darf der Compiler
+`struct`s beliebig mit Padding auffüllen. Unterschiedliche Compiler
+können dafür andere Strategien nutzen. Sogar derselbe Compiler, auf eine
+anderen Architektur betrieben könnte anderes vorgehen. Sogar derselbe
+Compiler auf der selben Architektur. "Beliebig" halt.
 
-What I'm getting at is this: it's not portable to just `fwrite()` an
-entire `struct` out to a file when you don't know where the padding will
-end up.
+Worauf ich hinaus will: einfach mit `fwrite()` eine gesamte `struct` zu
+schreiben ist nicht portabel wenn man sich nicht sicher ist, wo Padding
+landet.
 [i[File I/O-->with `struct`s]>]
 
-How do we fix this? Hold that thought---we'll look at some ways to do
-this after looking at another related problem.
+Wie geht man damit um. Einen Moment noch --- das betrachten wir, nachdem
+wir uns ein verwandtes Problem angeschaut haben.
 
 [i[File I/O-->with numeric values]<]
-Numbers!
+Zahlen!
 
-Turns out all architectures don't represent numbers in memory the same
-way.
+Es stellt sich heraus, dass nicht alle Architekturen Zahlen auf die
+selbe Art im Speicher darstellen.
 
-Let's look at a simple `fwrite()` of a 2-byte number. We'll write it in
-hex so each byte is clear. The most significant byte will have the value
-`0x12` and the least significant will have the value `0x34`.
+Schauen wir uns an, was ein einfaches `fwrite()` mit einer 2-Byte langen
+Zahl anstellt. Nutzen wir Hexadezimaldarstellung um jedes Byte deutlich
+zu weigen. Der höchstwertige Byte (eng. _most significant_) nimmt den Wert
+`0x12` and und der niederwertigste Byte (eng. _least significant_) den
+Wert `0x34`.
 
 ``` {.c}
 unsigned short v = 0x1234;  // Two bytes, 0x12 and 0x34
