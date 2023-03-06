@@ -501,7 +501,7 @@ anschauen:
 Und es stellt sich herraus, dass die Wert in Hexadezimal mit den
 geschrieben Werten (in Dezimalschreibweise) übereinstimmen.
 
-Veruschen wir sie nun mit einem anderen Programm wieder einzulesen. Das
+Vesuchen wir sie nun mit einem anderen Programm wieder einzulesen. Das
 muss die Datei im Binäremodus zu lesen öffnen (`"rb"` Mode) und ließt
 byteweise in einer Schleife:
 
@@ -575,50 +575,52 @@ unsigned short v = 0x1234;  // Two bytes, 0x12 and 0x34
 fwrite(&v, sizeof v, 1, fp);
 ```
 
-What ends up in the stream?
+Was landet im _Stream_?
 
-Well, it seems like it should be `0x12` followed by `0x34`, right?
-
-But if I run this on my machine and hex dump the result, I get:
+Man würde meinen, dass dort ein `0x12` gefolgt von einem `0x34` steht
+sollte, oder? Aber auf meinem Rechner ergibt der Hexdump folgendes:
 
 ``` {.default}
 34 12
 ```
 
-They're reversed! What gives?
+Warum falschrum?
 
-This has something to do with what's called the
-[i[Endianess]][flw[_endianess_|Endianess]] of the architecture. Some
-write the most significant bytes first, and some the least significant
-bytes first.
+Das hat mit dem Konzept von [i[Endianess]][flw[_endianess_|Endianess]] (dt. laut Wikipedia Byte-Reihenfolge eng. auch mbyte order) zu tun, und ist je nach Architektur unterschiedlich ausgeprägt. Manche schreiben den höchstwertigen Byte zuerst und andere den niederwertigsten.
 
-This means that if you write a multibyte number out straight from
-memory, you can't do it in a portable way^[And this is why I used
-individual bytes in my `fwrite()` and `fread()` examples, above,
-shrewdly.].
+Einen Zahltyp, der länger als ein Byte ist einfach wegzuschreiben ist
+demzufolge nicht portabel^[Nebenbei erwähnt ist das auch der Grund warum
+ich geschickt nur individuelle Bytes in den Beispielen zu `fwrite()`
+und `fread()` verwendete.].
 
-A similar problem exists with floating point. Most systems use the same
-format for their floating point numbers, but some do not. No guarantees!
+Eine ähnliches Problem besteht mit Fliesskommazahlen. Die meisten System
+nutzten das selbe Format zu Darstellung von Fliesskommazahlen, das ist
+aber leider nicht festgelegt.
+
+<!-- Translator Note: possibly mention IEEE 754 here in a footnot to give people
+somehting to google?-->
 
 [i[File I/O-->with `struct`s]<]
-So... how can we fix all these problems with numbers and `struct`s to
-get our data written in a portable way?
 
-The summary is to [i[Data serialization]]_serialize_ the data, which is
-a general term that means to take all the data and write it out in a
-format that you control, that is well-known, and programmable to work
-the same way on all platforms.
+Wie also gehen wir mit Zahlen und `struct`s um, um unsere Daten
+portabel zu sichern?
 
-As you might imagine, this is a solved problem. There are a bunch of
-serialization libraries you can take advantage of, such as Google's
-[flw[_protocol buffers_|Protocol_buffers]], out there and ready to use.
-They will take care of all the gritty details for you, and even will
-allow data from your C programs to interoperate with other languages
-that support the same serialization methods.
+Die Kurzform lautet [i[Data serialization]]_Serialisierung_ der Daten
+(eng. _data serialization_). Dabei handelt es sich um einen allgemeinen
+Begriff, der meint, dass man sich die Daten schnappt und explizit in
+einer bestimmten, wohldefinierten Form schreibt, die auf allen
+Plattformen genutzt werden kann.
 
-Do yourself and everyone a favor! Serialize your binary data when you
-write it to a stream! This will keep things nice and portable, even if
-you transfer data files from one architecture to another.
+Es gibt bereits Lösungen für das Problem, wie du dir sicher vorstellen
+kannst. Bestehende Serialisierungs-Bibliotheken, wie beispielsweise
+Google's [flw[protocol buffers|Protocol_buffers]], kümmern sich um die
+komplizierten Details und ermöglichen sogar die Zusammenarbeit mit
+anderen Programmiersprachen, die dieselben Mechanismen unterstützen.
+
+Tu Dir (und allen Mitmenschen) einen Gefallen und serialisiere Daten
+immer, wenn Du sie auf einen _Stream_ schreibst! So bleiben Dinge schöne
+portabel, selbst wenn Dateien auf eine andere Architektur verschoben
+werden.
 [i[File I/O-->with `struct`s]>]
 [i[File I/O-->with numeric values]>]
 [i[File I/O]>]
