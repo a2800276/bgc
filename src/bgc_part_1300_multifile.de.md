@@ -3,34 +3,33 @@
 # vim: ts=4:sw=4:nosi:et:tw=72
 -->
 
-# Projekte auf Dateien aufteilen
+# Multifile Projects
 
 [i[Multifile projects]<]
 
-Bislang haben wir nur Spielzeugprogamm betrachtet die größtenteils in
-eine einzelne Datei passen. Komplexe C Programme bestehen aber aus
-mehreren Dateien die gemeinsam kompiliert und zu einem ausführbaren
-Programm verlinkt werden.
+So far we've been looking at toy programs that for the most part fit in
+a single file. But complex C programs are made up of many files that are
+all compiled and linked together into a single executable.
 
-Dieses Kapitel betracht üblich Muster und Verfahren die verwendet werden
-um mit großen Projekten umzugehen.
+In this chapter we'll check out some of the common patterns and
+practices for putting together larger projects.
 
-## Includes und Prototypen von Funktionen  {#includes-func-protos}
+## Includes and Function Prototypes  {#includes-func-protos}
 
 [i[Multifile projects-->includes]<]
 [i[Multifile projects-->function prototypes]<]
 
-Sehr häufig kommt vor, dass Funktionen, die in einer Datei definiert
-sind, von einer anderen Datei ausgeführt werden sollen.
+A really common situation is that some of your functions are defined in
+one file, and you want to call them from another.
 
-Das funktioniert ohne weiteres, erzeugt aber eine Warnung. Probieren wir
-es und versuchen anschließend, die Warnung zu beseitigen.
+This actually works out of the box with a warning... let's first try it
+and then look at the right way to fix the warning.
 
-Bei diesen Beispielen führen wir die jeweilgen Dateinamen als Kommentar
-auf.
+For these examples, we'll put the filename as the first comment in the
+source.
 
-Um zu kompilieren, müssen alle Source-Dateien auf der Kommandozeile
-genannt werden.
+To compile them, you'll need to specify all the sources on the command
+line:
 
 ``` {.zsh}
 # output file   source files
@@ -39,10 +38,10 @@ genannt werden.
 gcc -o foo foo.c bar.c
 ```
 
-Im obigen Beispiel wird aus `foo.c` und `bar.c` ein Program names `foo`
-gebaut.
+In that examples, `foo.c` and `bar.c` get built into the executable
+named `foo`.
 
-Schauen wir uns den Quelltext von `bar.c` an:
+So let's take a look at the source file `bar.c`:
 
 ``` {.c .numberLines}
 // File bar.c
@@ -53,7 +52,7 @@ int add(int x, int y)
 }
 ```
 
-`foo.c` enthält `main()` und sieht so aus:
+And the file `foo.c` with main in it:
 
 ``` {.c .numberLines}
 // File foo.c
@@ -66,44 +65,37 @@ int main(void)
 }
 ```
 
-<!-- Note: main in backticks? -->
+See how from `main()` we call `add()`---but `add()` is in a completely
+different source file! It's in `bar.c`, while the call to it is in
+`foo.c`!
 
-Von `main()` rufen wir zwar `add()` auf --- aber `add()` befindet sich
-in einer ganz anderen Datei! Und zwar `bar.c` und das obwohl sich der
-Aufruf in `foo.c` befindet! See how from `main()` we call `add()`---but
-`add()` is in a completely different source file! It's in `bar.c`, while
-the call to it is in `foo.c`!
-
-Bauen wir das Ganze wie folgt:
+If we build this with:
 
 ``` {.zsh}
 gcc -o foo foo.c bar.c
 ```
 
-erhalten wir diese Fehlermeldung:
+we get this error:
 
 ``` {.default}
 error: implicit declaration of function 'add' is invalid in C99
 ```
 
-(Vielleicht auch nur eine Warnung. Die sollte man nicht ignorieren. Bei
-C NIE Warnungen ignorieren; man muss auf alle eingehen.)
+(Or you might get a warning. Which you should not ignore. Never ignore
+warnings in C; address them all.)
 
+If you recall from the [section on prototypes](#prototypes), implicit
+declarations are banned in modern C and there's no legitimate reason to
+introduce them into new code. We should fix it.
 
-Vielleicht erinnerst Du Dich noch an den [Abschnitt über
-Prototypen](#prototypes). Dort wurde erwähnt, dass implizite
-Deklarationen aus modernem C verbannt worden sind und es keinen
-legitimen Grund gibt, sie in neuem Code zu verwenden. Wir sollten das
-fixen.
+What `implicit declaration` means is that we're using a function, namely
+`add()` in this case, without letting C know anything about it ahead of
+time. C wants to know what it returns, what types it takes as arguments,
+and things such as that.
 
-Mit `implizierte Deklaration` is gemeint, das wir eine Funktion
-verwenden, in diesem Fall `add()` ohne C darüber Informationen zu
-liefern. C möchte aber wissen wie der Rückgabetyp lautet, welche
-Argumente erwartet sind, usw.
-
-Wir habe bereits gesehen, wie man das mit _Protoypen_ für die Funktion
-lösen kann. Und, siehe da, wenn wir `foo.c` einen Prototyp verpassen,
-funktioniert alles.
+We saw how to fix that earlier with a _function prototype_. Indeed, if
+we add one of those to `foo.c` before we make the call, everything works
+well:
 
 ``` {.c .numberLines}
 // File foo.c
@@ -118,26 +110,25 @@ int main(void)
 }
 ```
 
-Keine Fehler!
+No more error!
 
-Leider nervt es ständig Protypen tippen zu müssen, wenn man eine
-Funktion verwenden möchte. Immerhin haben wir auch `printf()` verwendet
-und mussten keinen Prototyp abtippen. 
+But that's a pain---needing to type in the prototype every time you want
+to use a function. I mean, we used `printf()` right there and didn't
+need to type in a prototype; what gives?
 
-Wenn Du Dich bitte an `hello.c` am Anfang des Buches zurück erinnern
-würdest. Dort _haben wir tatsächlich den Protypen von `printf()`
-eingefügt_! Der befindet sich in der Datei `stdio.h` und die wiederrum
-wurde mit Hilfe von `#include` eingefügt!
+If you remember from what back with `hello.c` at the beginning of the
+book, _we actually did include the prototype for `printf()`_! It's in
+the file `stdio.h`! And we included that with `#include`!
 
-Geht das auch mit unserem `add()`? Können wir ein Protyp erstellen und
-in eine Header Datei stecken?
+Can we do the same with our `add()` function? Make a prototype for it
+and put it in a header file?
 
-Klar doch!
+Sure!
 
-Per Default haben Header Dateien in C die Endung `.h`. Und häufig, aber
-nicht immer, heissen sie ansonsten so wie die dazugehörige `.c` Datei.
-Erstellen wir also eine `bar.h` Datei als Brüderchen für `bar.c` und
-stopfen einen Prototypen rein:
+Header files in C have a `.h` extension by default. And they often, but
+not always, have the same name as their corresponding `.c` file. So
+let's make a `bar.h` file for our `bar.c` file, and we'll stick the
+prototype in it:
 
 ``` {.c .numberLines}
 // File bar.h
@@ -145,9 +136,9 @@ stopfen einen Prototypen rein:
 int add(int, int);
 ```
 
-Jetzt muss nur noch `foo.c` angepasst werden um die diese Header-Datei
-einzufügen. Dazu verwenden wir die `#include` Direktive mit mit
-doppelten Anführungszeichen statt eckigen Klammern:
+And now let's modify `foo.c` to include that file. Assuming it's in the
+same directory, we include it inside double quotes (as opposed to angle
+brackets):
 
 ``` {.c .numberLines}
 // File foo.c
@@ -162,74 +153,70 @@ int main(void)
 }
 ```
 
-Und siehe da: keine Protyp mehr nötig -- der wurde aus `bar.h` ergänzt.
-Jetzt können _alle_ Dateien, von denen aus `add()` verwendet werden soll
-den Protype mittles `#include "bar.h"` einfügen und sparen sich das
-Tippen.
+Notice how we don't have the prototype in `foo.c` anymore---we included
+it from `bar.h`. Now _any_ file that wants that `add()` functionality
+can just `#include "bar.h"` to get it, and you don't need to worry about
+typing in the function prototype.
 
-Wie Du Dir vermutlich denken kann, führt das `#include` dazu, dass die
-benannte Datei _genau an dieser Stelle_ in Deinen Quelltext
-eingefügt^[An.d.Üb. ja "eingefügt"! "inkludiert" ist kein richtiges
-Wort, klingt Scheisse und bedeutet, wenn überhaupt, etwas anderes.], so
-als hättest Du die Datei selber abgetippt.
+As you might have guessed, `#include` literally includes the named file
+_right there_ in your source code, just as if you'd typed it in.
 
-Und jetzt der mit Spannung erwartete Augenblick:
+And building and running:
 
 ``` {.zsh}
 ./foo
 5
 ```
 
-Tatsache, das Ergebnis von$2+3$! Hurra.
+Indeed, we get the result of $2+3$! Yay!
 
-Wenn Du schon ein Bier ausgepackt hast, hast Du Dich allerdings zu früh
-gefreut. Wir haben es aber fast geschafft, nur noch ein bisschen
-Boilerplate drum herum.
+But don't crack open your drink of choice quite yet. We're almost there!
+There's just one more piece of boilerplate we have to add.
 
 [i[Multifile projects-->function prototypes]>]
 
-## Mit Wiederholtem Einfügen von Headern umgehen
+## Dealing with Repeated Includes
 
-Header Dateien fügen häufige weitere Header, die von der zugehörigen C
-Datei benötigt werden mit `#include` zusammen. Und warum auch nicht?
+It's not uncommon that a header file will itself `#include` other
+headers needed for the functionality of its corresponding C files. I
+mean, why not?
 
-Und es kann passieren, dass eine Header Datei mehrfach eingefügt wird.
-Vielleicht kein Problem, aber vielleicht resultieren daraus Fehler. Und
-wir haben natürlich keinen Einfluss darauf, wie häufig andere unsere
-Header mit `#include` irgendwo einfügen.
+And it could be that you have a header `#include`d multiple times from
+different places. Maybe that's no problem, but maybe it would cause
+compiler errors. And we can't control how many places `#include` it!
 
-Noch schlimmer wäre eine Situation in der `a.h` den Header `b.h` einfügt
-und -- halt Dich fest -- `b.h` wiederrum `a.h` einfügt. Das wäre eine
-Endlosschleife!
+Even, worse we might get into a crazy situation where header `a.h`
+includes header `b.h`, and `b.h` includes `a.h`! It's an `#include`
+infinite cycle!
 
-Der Versuch, so etwas zu bauen, resultiert in einem Fehler:
+Trying to build such a thing gives an error:
 
 ``` {.default}
 error: #include nested depth 200 exceeds maximum of 200
 ```
 
-Wir benötigen einen Mechanismus der verhindert, dass ein Header
-eingefügt werden kann, sobald er bereits mit `#incude` eingefügt wurde.
+What we need to do is make it so that if a file gets included once,
+subsequent `#include`s for that file are ignored.
 
-** Das folgende Geraffel ist so üblich, dass Du es verinnerlichen
-solltest und bei jeder Header Datei, die Du schreibst verwenden
-solltest! **
+**The stuff that we're about to do is so common that you should just
+automatically do it every time you make a header file!**
 
-Eine übliche Art damit umzugehen ist es, im Rahmen des ersten
-`#include`-Vorgang eine Präprozessor Variabel zu definieren, um bei
-nachfolgenden `#include`s prüfen zu können, ob die Datei bereits
-eingefügt worden ist.
+And the common way to do this is with a preprocessor variable that we
+set the first time we `#include` the file. And then for subsequent
+`#include`s, we first check to make sure that the variable isn't
+defined.
 
-Der geläufigste Variabelnamen für diesen Zweck ist der Dateiname,
-grossgeschrieben und mit Unterstrich statt Punkt. Aus `bar.h` wird also:
-`BAR_H`.
+For that variable name, it's super common to take the name of the header
+file, like `bar.h`, make it uppercase, and replace the period with an
+underscore: `BAR_H`.
 
-Man prüft also ganz oben in der Header Datei, ob sie bereits eingefügt
-worden ist, und wenn ja, kommentiert man den Rest sozusagen aus.
+So put a check at the very, very top of the file where you see if it's
+already been included, and effectively comment the whole thing out if it
+has.
 
-(Der Variabelnname sollte nicht mit einem anführenden Unterstricht
-beginnen, weil das reserviert ist. Auch nicht mit zwei Unterstrichen.
-Auch reserviert.)
+(Don't put a leading underscore (because a leading underscore followed
+by a capital letter is reserved) or a double leading underscore (because
+that's also reserved.))
 
 ``` {.c .numberLines}
 #ifndef BAR_H   // If BAR_H isn't defined...
@@ -242,103 +229,93 @@ int add(int, int);
 #endif          // End of the #ifndef BAR_H
 ```
 
-Das verhindert wirksam, dass der Header mehrfach eingeführt wird, egal
-wir häufig `#include` verwendet wird.
-
-<!--Note: I realize it's non standard, but it may be worth it to mention
-#pragma once round about here ...-->
+This will effectively cause the header file to be included only a single
+time, no matter how many places try to `#include` it.
 
 [i[Multifile projects-->includes]>]
 
-## `static` und `extern`
+## `static` and `extern`
 
 [i[`static` storage class]<]
 [i[`extern` storage class]<]
 [i[Multifile projects-->`static` storage class]<]
 [i[Multifile projects-->`extern` storage class]<]
 
-Man verwendet das Schlüsselwort `static`, um sicherzustellen, das
-Variabeln und Funktionen _nicht_ ausserhalb der aktuellen Datei sichtbar
-sind, wenn ein Projekt aus mehreren Dateien besteht.
+When it comes to multifile projects, you can make sure file-scope
+variables and functions are _not_ visible from other source files with
+the `static` keyword.
 
-Andererseits kann man auf Objekte in anderen Dateien mittels `extern`
-verweisen.
+And you can refer to objects in other files with `extern`.
 
-Für Näheres beachte bitte die Abschnite zu
-[`static`](#static) und [`extern`](#extern) _storage-class Specifier_ (dt. Speicherklassenbezeichner).
+For more info, check out the sections in the book on the
+[`static`](#static) and [`extern`](#extern) storage-class specifiers.
 
 [i[`static` storage class]>]
 [i[`extern` storage class]>]
 [i[Multifile projects-->`static` storage class]>]
 [i[Multifile projects-->`extern` storage class]>]
 
-## Mit Objekt-Dateien kompilieren
+## Compiling with Object Files
 
 [i[Object files]<]
 
-Object Datein kommen in dem Standard nicht vor, sind aber Usus in
-99.999% der C Welt.
+This isn't part of the spec, but it's 99.999% common in the C world.
 
-Man C Dateien zu eine Zwichendarstellung names _Object Datei_ (eng.
-_object file_) kompilieren. Darin befindet sich kompilierter
-Maschinencode der allerdings noch nicht zu einem ausführbaren Progamm
-gemacht worden ist.
+You can compile C files into an intermediate representation called
+_object files_. These are compiled machine code that hasn't been put
+into an executable yet.
 
-Unter Windows haben Object Dateien die Endung `.OBJ`; auf Unix-artigen
-Systemen enden sie `.o`.
+Object files in Windows have a `.OBJ` extension; in Unix-likes, they're
+`.o`.
 
 [i[`gcc` compiler]<]
 
-Mit `gcc` können wir sie mit dem `-c` (nur _compilieren_) Flag erzeugen.
+In gcc, we can build some like this, with the `-c` (compile only!) flag:
 
 ``` {.zsh}
 gcc -c foo.c     # produces foo.o
 gcc -c bar.c     # produces bar.o
 ```
 
-Schlussendlich können Objekt Dateien dann zu einem Programm ge_link_t
-werden:
+And then we can _link_ those together into a single executable:
 
 ``` {.zsh}
 gcc -o foo foo.o bar.o
 ```
 
-_Voila_, ein ausführbares Progamm `foo` zusammengezaubert aus zwei
-Objektdateien!
+_Voila_, we've produced an executable `foo` from the two object files.
 
-Und jetzt fragst Du Dich .. na und? Wir können doch auch einfach:
+But you're thinking, why bother? Can't we just:
 
 ``` {.zsh}
 gcc -o foo foo.c bar.c
 ```
 
-machen und zwei [flw[boids|Boids]] gleichzeitig erschlagen?
+and kill two [flw[boids|Boids]] with one stone?
 
 [i[`gcc` compiler]>]
 
-Für kleine Programm geht das wunderbar. Ich mache das ständig.
+For little programs, that's fine. I do it all the time.
 
-Bei großen Programmen können wir es uns zu Nutzen machen, dass
-Objekt-Dateien Kompilieren ziemlich zeitaufwendig ist während
-Objekt-Datei Linken ziemlich flott geht.
+But for larger programs, we can take advantage of the fact that
+compiling from source to object files is relatively slow, and linking
+together a bunch of object files is relatively fast.
 
-Der Vorteil zeigt sich deutlich, wenn man das `make` Werkzeug verwendet,
-welches nur Sourcen kompiliert, die neuer sind als bereits erzeugte
-Object-Dateien.
+This really shows with the `make` utility that only rebuilds sources
+that are newer than their outputs.
 
-Gehen wir mal von 1000 C Dateien aus. Die können wir anfangs alle
-kompilieren (lahm!) und dann die resultierenden Objekt-Dateien zu einem
-Progamm zusammenlinken (flott!).
+Let's say you had a thousand C files. You could compile them all to
+object files to start (slowly) and then combine all those object files
+into an executable (fast).
 
-Nehmen wir nun an, Du nimmst nur eine klitzekleine Änderung an einer
-einzigen C Datei vor. Und jetzt der Trick: _Du musst nur diese eine
-Objekt-Datei neu kompilieren_! Und dann flott das Programm
-zusammenbauen. Die übrigen C Dateien benötigt man gar nicht mehr.
+Now say you modified just one of those C source files---here's the
+magic: _you only have to rebuild that one object file for that source
+file_! And then you rebuild the executable (fast). All the other C files
+don't have to be touched.
 
-Anders ausgedrückt verringern wir radikal die zum kopmilieren benötigte
-Zeit in dem wir uns auf die Objekt-Dateien beschränken, die gerade
-benötigt werden. (Es sei denn, wir führen ein `clean` Build durch, bei
-dem alle Objekt-Dateien neu erstellt werden.)
+In other words, by only rebuilding the object files we need to, we cut
+down on compilation times radically. (Unless of course you're doing a
+"clean" build, in which case all the object files have to be created.)
 
 [i[Object files]>]
 [i[Multifile projects]>]
