@@ -1,0 +1,54 @@
+     1	bgc_part_0100_boilerplate.md 	| DRAFT
+     2	bgc_part_0150_intro.md	     	| DRAFT
+     3	bgc_part_0200_var_stat.md	| DRAFT
+     4	bgc_part_0300_functions.md	| DRAFT
+     5	bgc_part_0400_pointers.md	| DRAFT
+     6	bgc_part_0500_arrays.md		| DRAFT
+     7	bgc_part_0600_strings.md	| DRAFT
+     8	bgc_part_0700_structs.md	| DRAFT
+     9	bgc_part_0725_io.md		| DRAFT
+    10	bgc_part_0750_typedef.md	| DRAFT
+    11	bgc_part_0800_pointers_2.md	| [ ]
+    12	bgc_part_0850_malloc.md		| [ ]
+    13	bgc_part_0900_scope.md		| DRAFT
+    14	bgc_part_1000_types_2.md	| [ ]
+    15	bgc_part_1100_types_3.md	| [ ]
+    16	bgc_part_1200_types_4.md	| [ ]
+    17	bgc_part_1300_multifile.md	| DRAFT
+    18	bgc_part_1400_env.md		| [ ]
+    19	bgc_part_1500_cpp.md		| [ ]
+    20	bgc_part_1600_structs2.md	| [ ]
+    21	bgc_part_1700_strings2.md	| DRAFT
+    22	bgc_part_1800_enum.md		| DRAFT
+    23	bgc_part_1900_ptrptr.md		| [ ]
+    24	bgc_part_2000_bitwise.md	| DRAFT
+    25	bgc_part_2100_variadic.md	| [ ]
+    26	bgc_part_2150_locale.md		| [ ]
+    27	bgc_part_2200_unicode.md	| [ ]
+    28	bgc_part_2300_exit.md		| [ ]
+    29	bgc_part_2400_signal.md		| [ ]
+    30	bgc_part_2500_vla.md		| [ ]
+    31	bgc_part_2600_goto.md		| [ ]
+    32	bgc_part_2700_typesv.md		| [ ]
+    33	bgc_part_2800_arrays_2.md	| [ ]
+    34	bgc_part_2900_jmp.md		| [ ]
+    35	bgc_part_3000_inctype.md	| [ ]
+    36	bgc_part_3100_complex.md	| [ ]
+    37	bgc_part_3200_fixedint.md	| [ ]
+    38	bgc_part_3300_time.md		| [ ]
+    39	bgc_part_3400_threads.md	| [ ]
+    40	bgc_part_3490_atomics.md	| [ ]
+    41	bgc_part_3500_noreturn_align.md	| [ ]
+    42	common-css-src.html
+    43	latex
+    44	misc.md
+    45	notes.tim
+    46	schedule
+    47	shitty_examples.txt
+    48	unicodecheat.txt
+    49	widescreen-css-src.html
+    50	README.md
+    51	attic
+    52	bgc-wide.html
+    53	bgc.html
+    54	Makefile
