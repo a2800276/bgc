@@ -144,69 +144,78 @@ besser ein Bild machen, wie alles im Speicher arrangiert ist..
 
 [i[Unicode-->endianess]<]
 
-Look in there for the patterns. Note that UTF-16BE and UTF-32BE are
-simply the code point represented directly as 16- and 32-bit
-values^[Again, this is only true in UTF-16 for characters that fit in
-two bytes.].
+Schau mal, ob Dir irgendwelche Muster auffallen. Nicht vergessen, dass
+es sich bei
+UTF-16BE und UTF-32BE schlicht und ergreifend um die 16- und 32-Bit
+Darstellung der _Codepoints_ handelt ^[Und nochmal, stimmt bei UTF-16
+selbstverständlich nur für Zeichen deren _Codepoint_ in zwei Bytes
+passt.]
 
 [i[Unicode-->UTF-16]>]
 [i[Unicode-->UTF-32]>]
 
+_Little Endian_ is dasselbe, außer, dass die Bytes in _Little Endian_
+Reihenfolge sind.
 Little-endian is the same, except the bytes are in little-endian order.
 
 [i[Unicode-->endianess]>]
 
-Then we have UTF-8 at the end. First you might notice that the
-single-byte code points are represented as a single byte. That's nice.
-You might also notice that different code points take different number
-of bytes. This is a variable-width encoding.
+Und zum Schluss haben wir noch UTF-8. Als erstes fällt auf, dass ein
+Byte _Codepoints_ von einem einzigen Byte dargestellt werden. Das ist
+gut. Ebenso fällt auf, dass unterschiedliche _Codepoints_ mit
+einer variabelen Anzahl Bytes dargestellt werden. Daher ist es ein
+_variable lenght Encoding_.
 
-So as soon as we get above a certain value, UTF-8 starts using
-additional bytes to store the values. And they don't appear to correlate
-with the code point value, either.
+Sobald der Wert des _Codepoints_ einen gewissen Wert übersteigt,
+verwendet UTF-8 weitere Bytes um den Wert darzustellen. Aber die Werte
+scheinen keinen Zusammenhang mit den eigentlichen _Codepoints_ zu haben.
 
-[flw[The details of UTF-8 encoding|UTF-8]] are beyond the scope of this
-guide, but it's enough to know that it has a variable number of bytes
-per code point, and those byte values don't match up with the code point
-_except for the first 128 code points_. If you really want to learn
-more, [fl[Computerphile has a great UTF-8 video with Tom
-Scott|https://www.youtube.com/watch?v=MijmeoH9LT4]].
 
-That last bit is a neat thing about Unicode and UTF-8 from a North
-American perspective: it's backward compatible with 7-bit ASCII
-encoding! So if you're used to ASCII, UTF-8 is the same! Every
-ASCII-encoded document is also UTF-8 encoded! (But not the other way
-around, obviously.)
+[flw[Die Feinheiten von UTF-8 _Encoding_|UTF-8]] übersteigen hier den
+Umfang. Es reicht zu wissen, dass UTF-8 Zeichen unterschiedlich lang
+sein können, und, dass ihr Wert nicht ihrem _Codepoint_ entspricht, _es
+sei denn, es handelt sich um einen der ersten 128 Codepoints_. Wenn Du
+tieder einsteigen magst, kann ich folgendes [fl[Computerphile Video über
+UTF-8 video mit Tom Scott|https://www.youtube.com/watch?v=MijmeoH9LT4]]
+empfehlen.
 
-It's probably that last point more than any other that is driving UTF-8
-to take over the world.
+Das letzte erwähnt Detail macht Unicode und UTF-8 für Nordamerikaner
+besonders schmackhaft: es Rückwärtskompatibel zu 7-Bit ASCII! Wenn man
+ausschliesslich 7-Bit ASCII verwendet, verändert sich gar nichts! Jedes
+bestehende ASCII Dokument ist automatisch auch UTF-8 encoded!
+(Funktioniert andersrum natürlich nicht.)
+
+Und das ist vermutlich auch der Grund, warum UTF-8 so gut angenommen
+wird.
 
 [i[Unicode-->UTF-8]>]
 [i[Unicode-->encoding]>]
 
-## Source and Execution Character Sets {#src-exec-charset}
+## Zeichensätze im Quelltext- und Ausführungskontxt {#src-exec-charset}
 
 [i[Character sets]<]
 
-When programming in C, there are (at least) three character sets that
-are in play:
+Beim Programmieren in C spielen (mindestens) frei verschiedene
+Zeichensätze eine Rolle:
 
-* The one that your code exists on disk as.
-* [i[Character sets-->source]]The one the compiler translates that into
-  just as compilation begins (the _source character set_). This might be
-  the same as the one on disk, or it might not.
-* [i[Character sets-->execution]]The one the compiler translates the
-  source character set into for execution (the _execution character
-  set_). This might be the same as the source character set, or it might
-  not.
+* Der, mit dem Dein Quelltext auf die Festplatte geschrieben ist
+* [i[Character sets-->source]] Der, zu dem der Compiler den Quelltext
+  während des Kompiliervorgangs übersetzt (der _source character set_).
+  Dabei kann es sich um den Zeichensatz auf der Festplatte handeln, muss
+  es aber nicht.
+* [i[Character sets-->execution]] Den Zeichensatz, zu dem der Compiler
+  den Quelltext umwandelt für die Verwendung beim ausführen des
+  kompilierten Programms. Dieses _execution character
+  set_ kann mit der _source character set_ übereinstimmen, muss aber
+  nicht.
 
-Your compiler probably has options to select these character sets at
-build-time.
+Zum Zeitpunkt des _Build_ kann man dem Compilere all diese Zeichensätze
+angeben.
 
 [i[Character sets-->basic]<]
 
-The basic character set for both source and execution will contain
-the following characters:
+Der Basiszeichensatz (_basic character set_) bleibt im Quelltext- und
+Ausführungskontext gleich, und besteht aus den folgenden Zeichen:
 
 ``` {.default}
 A B C D E F G H I J K L M
@@ -220,19 +229,20 @@ space tab vertical-tab
 form-feed end-of-line
 ```
 
-Those are the characters you can use in your source and remain 100%
-portable.
+All diese Zeichen können im Quelltext verwendet werden und alles bleibt
+100% portabel.
 
-The execution character set will additionally have characters for alert
-(bell/flash), backspace, carriage return, and newline.
+Der Zeichensatz zur Ausführung hat darüberhinaus Zeichen für Alerts
+(bimmeln und blinken), Backspace, Wagenrücklauf und Zeilenumbrüche.
 
-But most people don't go to that extreme and freely use their extended
-character sets in source and executable, especially now that Unicode and
-UTF-8 are getting more common. I mean, the basic character set doesn't
-even allow for `@`, `$`, or `` ` ``!
+Die meisten Menschen schränken sich aber nicht so weit ein und verwenden
+auch erweiterte Zeichen im Quelltext und beim Ausführen des Programms.
+Insbesonders seit Unicode und UTF-8 so verbreitet geworden sind. Der
+Basiszeichensatz erlaubt ja nicht mal '@', '$' oder gar '' ' '' !
 
-Notably, it's a pain (though possible with escape sequences) to enter
-Unicode characters using only the basic character set.
+An der Stelle soll nicht unerwähnt bleiben, dass es nervig (aber dank
+Escape Sequenzen möglich ...) ist, Unicode Zeichen nur mit Hilfe ds
+Basiszeichensatz einzugeben.
 
 [i[Character sets-->basic]>]
 [i[Character sets]>]
