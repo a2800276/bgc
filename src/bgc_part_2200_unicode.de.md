@@ -40,97 +40,101 @@ hätte wissen können das tatsächlich andere Alphabete mit weitaus mehr
 Buchstaben existieren. Es gibt über 50.000 chinesiche Schriftzeichen,
 viel Glück die alle mit einem Byte darzustellen. 
 
+Also haben sich Leute alle möglichen Tricks ausgedacht, um ihre
+speziellen Zeichensätze darzustellen. Was ok war, sich aber als Alptraum
+für Interoperabilität herausgestellt hat.
 
-So people came up with all kinds of alternate ways to represent their
-own custom character sets. And that was fine, but turned into a
-compatibility nightmare.
+Um dem zu entkommen wurde Unicode erfunden. _Der_ Zeichensatz der die
+Probleme ein-für-alle-mal löst. Für alle praktischen Zwecke undendliche
+groß, soll es uns nie an Platz für neue Zeichen mangeln. Er kann
+Chinesisch, Latein, Griechisch, Keilschrift, Schachsymbole, Emojis ...
+wirklich alles. Und ständig kommt mehr dazu!
 
-To escape it, Unicode was invented. One character set to rule them all.
-It extends off into infinity (effectively) so we'll never run out of
-space for new characters. It has Chinese, Latin, Greek, cuneiform, chess
-symbols, emojis... just about everything, really! And more is being
-added all the time!
-
-## Code Points
+## _Code Points_
 
 [i[Unicode-->code points]<]
 
-I want to talk about two concepts here. It's confusing because they're
-both numbers... different numbers for the same thing. But bear with me.
+An dieser Stelle möchte ich zwei Konzept verdeutlichen. Die verwirrend
+sind, da es sich bei beiden um Zahlen handelt ... unterschiedliche
+Zahlen für dieselbe Sache. 
 
-Let's loosely define _code point_ to mean a numeric value representing a
-character. (Code points can also represent unprintable control
-characters, but just assume I mean something like the letter "B" or the
-character "π".)
+Definieren wir _Codepoint_ locker als einen numerischen Wert, der für
+ein Zeichen steht. (_Codepoints_ können auch Steuerzeichen usw.
+darstellen, aber beschränken wir uns erstmal auf so etwas wie den
+Buchstaben "B" oder das Zeichen "π".)
 
-Each code point represents a unique character. And each character has a
-unique numeric code point associated with it.
+Jeder Codepoint repräsentiert eindeutig ein Zeichen. Und jedes Zeichen
+hat einen eindeutigen, numerischen Codepoint zugeordnet. 
 
-For example, in Unicode, the numeric value 66 represents "B", and 960
-represents "π". Other character mappings that aren't Unicode use
-different values, potentially, but let's forget them and concentrate on
-Unicode, the future!
 
-So that's one thing: there's a number that represents each character. In
-Unicode, these numbers run from 0 to over 1 million.
+In Unicode steht beispielsweise der numerische Wert 66 für "B" und 960
+steht für "π". Andere Zeichenzuordnungen als Unicode
+verwenden möglicherweise andere Werte, aber vergessen wir die und
+schauen in die Zukunft: auf Unicode, die Zukunft!
+
+Das ist also das Eine: es gibt für jedes Zeichen eine Zahl, die es
+repräsentiert. Die laufen in Unicode von 0 bis über 1 Millionen.
 
 [i[Unicode-->code points]>]
 
-Got it?
+Alles klar?
 
-Because we're about to flip the table a little.
+Denn jetzt betrachten wir die Kehrseite der Medaille.
 
-## Encoding
+## _Encoding_
 
 [i[Unicode-->encoding]<]
 
-If you recall, an 8-bit byte can hold values from 0-255, inclusive.
-That's great for "B" which is 66---that fits in a byte. But "π" is 960,
-and that doesn't fit in a byte! We need another byte. How do we store
-all that in memory? Or what about bigger numbers, like 195,024? That's
-going to need a number of bytes to hold.
+Wie Du Dich bestimmt erinnerst, kann ein 8-Bit Byte Werte von 0 bis 255
+darstellen. Erfreulich für unser "B" mit Wert 66 -- der passt in ein
+Byte. Aber "π" ist 960 und passt eben nicht in ein Byte! Wir brauchen
+noch einen Byte. Aber wie legen wir das im Speicher ab? Und was ist mit
+noch größeren Zahlen wie 195.024? Dafür bräuchten wir driekt einen
+ganzen haufen Bytes.
 
-The Big Question: how are these numbers represented in memory? This is
-what we call the _encoding_ of the characters.
+Die Große Frage lautet: wie stellen wir diese Zahlen im Speicher dar?
+Dabei handelt es sich um das _Encoding_ von Zeichen.
 
-So we have two things: one is the code point which tells us effectively
-the serial number of a particular character. And we have the encoding
-which tells us how we're going to represent that number in memory.
+So haben wir nun unsere zwei Konzepte: einerseits _Codepoints_, die
+jedem Zeichen sozusagen eine Seriennummer zuweisen. Und _Encoding_ das
+bestimmt, wie diese Zahl im Speicher dargestellt wird.
 
-There are plenty of encodings. You can make up your own right now, if
-you want^[For example, we could store the code point in a big-endian
-32-bit integer. Straightforward! We just invented an encoding! Actually
-not; that's what UTF-32BE encoding is. Oh well---back to the grind!].
-But we're going to look at some really common encodings that are in use
-with Unicode.
+Es gibt jede Menge _Encodings_. Wenn Du magst, kannst Du Dir selbst eins
+ausdenken^[Beispielsweise könntest Du den _Codepoint_ einfach und
+unkompliziert als _big-endian_ 32-Bit Integer ablegen. Oder auch nicht,
+weil Du dann UTF-32BE Encoding neu erfunden hättest. Naja, zurück an die
+Arbeit.]. Stattdessen schauen wir uns erstmal die gläufigen, bestehenden
+_Encodings_ für Unicode an.
 
 [i[Unicode-->UTF-8]<]
 [i[Unicode-->UTF-16]<]
 [i[Unicode-->UTF-32]<]
 
-|Encoding|Description|
+|Encoding|Beschreibung|
 |:-----------------:|:--------------------------------------------------------------|
-|UTF-8|A byte-oriented encoding that uses a variable number of bytes per character. This is the one to use.|
-|UTF-16|A 16-bit per character[^091d] encoding.|
-|UTF-32|A 32-bit per character encoding.|
+|UTF-8|Byte orientiert, verwendet eine variabele Anzahl Bytes pro Zeichen. Sollte man nehmen, wenn nichts dagegen spricht.|
+|UTF-16|Verwendet 16-Bit pro Zeichen[^091d].|
+|UTF-32|Verwendet 32-Bit pro Zeichen.|
 
-[^091d]: Ish. Technically, it's variable width---there's a way to
-represent code points higher than $2^{16}$ by putting two UTF-16
-characters together.
+[^091d]: Oder so. Genaugenommen handelt es sich auch um eine variabele
+  Breite, denn es gibt eine Möglichkeit _Codepoints_ die größer als
+  $2^{16}$ sind darzustellen, in dem man zwei UTF-16 Zeichen
+  aneinanderreiht.
 
-With UTF-16 and UTF-32, the byte order matters, so you might see
-UTF-16BE for big-endian and UTF-16LE for little-endian. Same for UTF-32.
-Technically, if unspecified, you should assume big-endian. But since
-Windows uses UTF-16 extensively and is little-endian, sometimes that is
-assumed^[There's a special character called the _Byte Order Mark_ (BOM),
-code point 0xFEFF, that can optionally precede the data stream and
-indicate the endianess. It is not required, however.].
+Bei UTF-16 und UTF-32 spielt die Bytereihenfolge eine Rolle, so dass einem durchaus 
+UTF-16BE für _Big-Endian_ und UTF-16LE für _Little-Endian_ über den Weg
+laufen. Sofern nichts angegeben ist, sollte man von _big-endian_
+ausgehen. Aber da Windows ziemlich intensiv gebrauch von UTF-16 macht
+und _little-endian_ ist, wird auch das manchmal angenommen.^[Es gibt
+ein Sonderzeichen names _Byte Order Mark_ (kurz BOM) mit _Codepoint_
+0xFEFF das man optional seinen Daten voranstellen kann um _Endianess_
+explizit anzuzeigen. Ist aber nicht vorgeschrieben].
 
-Let's look at some examples. I'm going to write the values in hex
-because that's exactly two digits per 8-bit byte, and it makes it easier
-to see how things are arranged in memory.
+Schauen wir uns ein paar Beispiele an. Ich notiere die Werte in Hex,
+weil das genau zwei Ziffer pro 8-Bit Byte ergibt, so kann man sich
+besser ein Bild machen, wie alles im Speicher arrangiert ist..
 
-|Character|Code Point|UTF-16BE|UTF-32BE|UTF-16LE|UTF-32LE|UTF-8|
+|Character|Codepoint|UTF-16BE|UTF-32BE|UTF-16LE|UTF-32LE|UTF-8|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |`A`|41|0041|00000041|4100|41000000|41|
 |`B`|42|0042|00000042|4200|42000000|42|
