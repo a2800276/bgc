@@ -154,9 +154,8 @@ passt.]
 [i[Unicode-->UTF-16]>]
 [i[Unicode-->UTF-32]>]
 
-_Little Endian_ is dasselbe, außer, dass die Bytes in _Little Endian_
-Reihenfolge sind.
-Little-endian is the same, except the bytes are in little-endian order.
+_Little Endian_ ist genauso aufgebaut, außer, dass die Bytes in _Little Endian_
+Reihenfolge angeordnet sind.
 
 [i[Unicode-->endianess]>]
 
@@ -249,25 +248,29 @@ Basiszeichensatz einzugeben.
 
 ## Unicode in C {#unicode-in-c}
 
-Before I get into encoding in C, let's talk about Unicode from a code
-point standpoint. There is a way in C to specify Unicode characters and
-these will get translated by the compiler into the execution character
-set^[Presumably the compiler makes the best effort to translate the code
-point to whatever the output encoding is, but I can't find any
-guarantees in the spec.].
+Lass uns kurz über Unicode aus der Sicht von _Codepoints_ sprechen,
+bevor für Zeichensätze in C besprechen. Es gibt in C die Möglichkeit,
+Unicode Zeichen anzugeben, so dass diese vom Compiler in den
+Ausführungszeichensatz übersetzt werden^[Vermutlich führt der Compiler
+_Best Effort_ Anstrengungen durch, die _Codepoint_ in den
+Ausgabezeichensatz zu übersetzen, aber ich habe nicht spezifisches dazu
+in der Spezifikation finden können.]. 
 
-So how do we do it?
+Wie funktioniert das also?
 
-How about the euro symbol, code point 0x20AC. (I've written it in hex
-because both ways of representing it in C require hex.) How can we put
-that in our C code?
+Z.B. das Euro-Symbol, _Codepoint_ 0x20AC. (Hier in Hex notiert, da beide
+Arten, es in C darzustellen, Hex erfordern.) Wie bringen wir das in
+unserem C Code unter?
 
 [i[`\u` Unicode escape]<]
-Use the `\u` escape to put it in a string, e.g. `"\u20AC"` (case for the
-hex doesn't matter). You must put **exactly four** hex digits after the
-`\u`, padding with leading zeros if necessary.
 
-Here's an example:
+Um es in eine Zeichenkette zu packen, verwenden wir die `\u`
+Escapesequenz, d.h. `"\u20AC"`. Während Groß- und Kleinschreibung bei
+Hex keine Rolle spielt, muss beachtet werden, dass sich **ganz genau** vier
+hexadezimale Ziffern hinter dem `\u` befinden. Falls nicht, muss mit
+führenden Nullen aufgefüllt werden.
+
+Hier ein Beispiel:
 
 ``` {.c}
 char *s = "\u20AC1.23";
@@ -277,10 +280,11 @@ printf("%s\n", s);  // €1.23
 
 [i[`\U` Unicode escape]<]
 
-So `\u` works for 16-bit Unicode code points, but what about ones bigger
-than 16 bits? For that, we need capitals: `\U`.
+`\u` funktioniert also für 16-Bit Unicode _Codepoints_, aber wie gehen
+wir mit _Codepoints_ um, die größer sind? Dafür brauchen wir Majuskeln:
+`\U`.
 
-For example:
+Zum Beispiel:
 
 ``` {.c}
 char *s = "\U0001D4D1";
@@ -288,8 +292,8 @@ char *s = "\U0001D4D1";
 printf("%s\n", s);  // Prints a mathematical letter "B"
 ```
 
-It's the same as `\u`, just with 32 bits instead of 16. These are
-equivalent:
+Die Escapesequenz verhält sich genau wie `\u`, nur mit 32 Bits statt mit
+16. Die beiden _Escapes_ bezeichnen das Gleiche:
 
 ``` {.c}
 \u03C0
@@ -299,13 +303,13 @@ equivalent:
 [i[`\u` Unicode escape]>]
 [i[`\U` Unicode escape]>]
 
-Again, these are translated into the [i[Character
-sets-->execution]]execution character set during compilation. They
-represent Unicode code points, not any specific encoding. Furthermore,
-if a Unicode code point is not representable in the execution character
-set, the compiler can do whatever it wants with it.
+<!-- Translator TODO: check previous character set/encoding usage -->
+Nochmal, die _Escapes_ werden in den Zeichensatz [i[Character
+sets-->execution]] des ausführenden Kontext übersetzt, nicht zu einer
+spezifischen Kodierung. Ferner darf der Compiler machen, was er will
+wenn ein _Codepoint_ im Ausführenden Zeichensatz nicht darstellbar ist. 
 
-Now, you might wonder why you can't just do this:
+Vielleicht fragst Du Dich jetzt, warum wir das nicht einfacher machen:
 
 ``` {.c}
 char *s = "€1.23";
@@ -313,33 +317,36 @@ char *s = "€1.23";
 printf("%s\n", s);  // €1.23
 ```
 
-And you probably can, given a modern compiler. The [i[Character
-sets-->source]]source character set will be translated for you into the
-[i[Character sets-->execution]]execution character set by the compiler.
-But compilers are free to puke out if they find any characters that
-aren't included in their extended character set, and the € symbol
-certainly isn't in the [i[Character sets-->basic]]basic character set.
+Und das wird vermutlich funktionieren, vorrausgesetzt, ein moderner
+Compiler wird verwendet. Der Compiler übersetzt den [i[Character
+sets-->source]]Quelltext Zeichensatz in den [i[Character
+sets-->execution]] Ausführunszeichensatz. Aber der Compiler darf
+Zeichen, die sich nicht in seinem erweiterten Zeichensatz befinden
+einfach ausspucken. Und das € Symbol befindet sich ganz bestimmt nicht
+im [i[Character sets-->basic]]Basiszeichensatz.
 
 [i[`\u` Unicode escape]<]
 [i[`\U` Unicode escape]<]
 
-Caveat from the spec: you can't use `\u` or `\U` to encode any code
-points below 0xA0 except for 0x24 (`$`), 0x40 (`@`), and 0x60 (`` `
-``)---yes, those are precisely the trio of common punctuation marks
-missing from the basic character set. Apparently this restriction is
-relaxed in the upcoming version of the spec.
+Kleiner Vorbehalt aus der Spezifikation: die `\u` und `\U` _Escapes_
+können nicht verwendet werden, um _Codepoints_ die kleiner als 0xA0
+sind, darzustellen. Ausser 0x24 (`$`), 0x40 (`@`) und 0x60 (`` ` ``) --
+genau das Trio gängiger Satzzeichen, die im Basiszeichensatz fehlen.
+Diese Einschränkung soll wohl in einer kommenden Spezifikation
+aufgehoben werden.
 
 [i[`\u` Unicode escape]>]
 [i[`\U` Unicode escape]>]
 
-Finally, you can also use these in identifiers in your code, with some
-restrictions. But I don't want to get into that here. We're all about
-string handling in this chapter.
+Abschließend soll kurz erwähnt werden, dass diese auch im Code als
+Bezeichner verwendet werden dürfen, allerdings mit ein paar
+Einschränkung. Das vertiefen wir an dieser Stelle nicht weiter, dieser
+Kapitel dreh sich um Zeichenketten.
 
+Und das war's schon zum Thema Unicode in C (Ausnahme: _Encoding_)
 And that's about it for Unicode in C (except encoding).
 
-## A Quick Note on UTF-8 Before We Swerve into the Weeds {#utf8-quick}
-
+## Noch ein kurzer Hinweis zu UTF-8 bevor wir die Abgründe ansteuern {#utf8-quick}
 [i[Unicode-->UTF-8]<]
 
 It could be that your source file on disk, the extended source
