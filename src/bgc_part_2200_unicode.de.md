@@ -349,51 +349,58 @@ And that's about it for Unicode in C (except encoding).
 ## Noch ein kurzer Hinweis zu UTF-8 bevor wir die Abgründe ansteuern {#utf8-quick}
 [i[Unicode-->UTF-8]<]
 
-It could be that your source file on disk, the extended source
-characters, and the extended execution characters are all in UTF-8
-format. And the libraries you use expect UTF-8. This is the glorious
-future of UTF-8 everywhere.
+Es könnte sein, dass Deine Quelldateien, der erweiterten Quelltext
+Zeichenumfang des Compilers und der Ausführungszeichensatz alle in UTF-8
+formatiert sind. Und, dass alle von Dir verwendeten Bibliotheken UTF-8
+verwenden. Das ist die glorreiche Zukunft von UTF-8.
 
-If that's the case, and you don't mind being non-portable to systems
-that aren't like that, then just run with it. Stick Unicode characters
-in your source and data at will. Use regular C strings and be happy.
+Sollte das tatsächlich der Fall sein und Du nimmst keinen Anstoß daran,
+nicht portabel gegenüber Systemen zu sein, die nicht so fortschrittlich
+sind, dann gibt es nicht mehr zu tun. Du kannst beliebig Unicode Zeichen
+in Source und in den Daten verwenden. Bleibe bei C Zeichenkette und
+erfreue Dich.
 
-A lot of things will just work (albeit non-portably) because UTF-8
-strings can safely be NUL-terminated just like any other C string. But
-maybe losing portability in exchange for easier character handling is a
-tradeoff that's worth it to you.
+Vieles wird einfach funktioniern (wenn auch nicht portabel), da UTF-8
+Zeichenketten sicher mit NUL terminiert werden können, genau wie andere C
+Zeichenketten auch. Aber vielleicht kannst Du den Verlust an
+Portabilität für den einfacheren Umgang mit Zeichenketten in Kauf
+nehmen.
 
-There are some caveats, however:
+Ein paar Sachen sollte man allerdings beachten:
 
-* Things like `strlen()` report the number of bytes in a string, not the
-  number of characters, necessarily. (The [i[`mbstowcs()` function-->with
-  UTF-8]]`mbstowcs()` returns the number of characters in a string when
-  you convert it to wide characters. POSIX extends this so you can pass
-  `NULL` for the first argument if you just want the character count.)
+* Sachen wie `strlen()` geben die Anzahl der in einer Zeichenkette
+  enthaltenen Bytes zurück, nicht unbedingt die Anzahl Zeichen. (Die
+  [i[`mbtowcs()` function-->with UTF-8]]`mbstowcs()` gibt die Anzahl
+  _Character_ in einem String zurück, wenn diese zu einem
+  umfassendenderen Type (_wider character_) umgewandelt wird. POSIX
+  erweitert dieses Verhalten, so dass man als erstes Argument `NULL`
+  übergeben kann, wenn man sich nur für die Anzahl Zeichen interessiert.
 
-* The following won't work properly with characters of more than one
-  byte: [i[`strtok()` function-->with UTF-8]]`strtok()`, [i[`strchr()`
+* Folgendes funktioniert nicht richtig mit Zeichen, die aus mehr als
+  einem Byte bestehen: [i[`strtok()` function-->with UTF-8]]`strtok()`, [i[`strchr()`
   function-->with UTF-8]]`strchr()` (use [i[`strstr()` function-->with
-  UTF-8]]`strstr()` instead), `strspn()`-type functions, [i[`toupper()`
+  UTF-8]]`strstr()` instead), `strspn()`-artige Funktionen, [i[`toupper()`
   function-->with UTF-8]]`toupper()`, [i[`tolower()` function-->with
   UTF-8]]`tolower()`, [i[`isalpha()` function-->with
-  UTF-8]]`isalpha()`-type functions, and probably more. Beware anything
-  that operates on bytes.
+  UTF-8]]`isalpha()`-type functions, und vermutlich noch viel mehr.
+  Obacht bei allem, was nur Bytes bearbeitet!
 
-* [i[`printf()` function-->with UTF-8]]`printf()` variants allow for a
-  way to only print so many bytes of a string^[With a format specifier
-  like `"%.12s"`, for example.]. You want to make certain you print the
-  correct number of bytes to end on a character boundary.
+* Es gibt [i[`printf()` function-->with UTF-8]]`printf()` Varianten,
+  welches die Ausgabe auf eiene gewisse Anzahl Bytes beschränken^[z.B.
+  mit Formatangaben wie `"%.12s"`.]. In solchen Fällen muss
+  sichergestellt sein, dass die angegebene Anzahl Bytes auf eine
+  Grenze zwischen zwei Zeichen landet.
 
-* [i[`malloc()` function-->with UTF-8]]If you want to `malloc()` space
-  for a string, or declare an array of `char`s for one, be aware that
-  the maximum size could be more than you were expecting. Each character
-  could take up to [i[`MB_LEN_MAX` macro]]`MB_LEN_MAX` bytes (from
-  `<limits.h>`)---except characters in the basic character set which are
-  guaranteed to be one byte.
+* [i[`malloc()` function-->with UTF-8]]Wenn mit `malloc()` Speicherplatz
+  für Zeichenkette erzeugt werden soll, oder ein `char` Array zu diesem
+  Zweck angelegt wird, muss beachtet werden, dass mehr unter Umstände
+  mehr Platz zur Verfügung gestellt werden muss, als erwartet. Jedes
+  Zeichen kann bis zu [i[`MB_LEN_MAX` macro]]`MB_LEN_MAX` Bytes (aus
+  `<limits.h>`) einnehmen---mit der Ausnahmen der Zeichen im
+  Basiszeichensatz, die garantiert nur ein Byte verwenden.
 
-And probably others I haven't discovered. Let me know what pitfalls
-there are out there...
+Es gibt sehr wahrscheinlich noch weiter Fettnäpfchen, in die ich noch
+nicht getreten bin. Sag gerne Bescheid, wenn Du welche entdeckst.
 
 [i[Unicode-->UTF-8]>]
 
