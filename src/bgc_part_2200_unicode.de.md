@@ -405,10 +405,12 @@ nicht getreten bin. Sag gerne Bescheid, wenn Du welche entdeckst.
 [i[Unicode-->UTF-8]>]
 
 ## Different Character Types
+## Weiter Typen für Zeichen
 
-I want to introduce more character types. We're used to `char`, right?
+I möchte noch ein paar C Typen für Zeichen vorstellen. Wir kennen ja all
+schon `char`, oder?
 
-But that's too easy. Let's make things a lot more difficult! Yay!
+Das ist aber zu einfach. Lass uns die Sachen ein bisschen erschweren!
 
 ### Multibyte Characters
 
@@ -418,26 +420,32 @@ First of all, I want to potentially change your thinking about what a
 string (array of `char`s) is. These are _multibyte strings_ made up of
 _multibyte characters_.
 
-That's right---your run-of-the-mill string of characters is multibyte.
-When someone says "C string", they mean "C multibyte string".
+Erstens möchte ich vielleicht ändern, wie Du über Strings denkst (also
+Arrays von `chars`s). Dabei handelt es sich um _multibyte Zeichenketten_
+die aus _multibyte Zeichen_ bestehen.
 
-Even if a particular character in the string is only a single byte, or
-if a string is made up of only single characters, it's known as
-a multibyte string.
+Du hast richtig gehört, Deine 0815 Zeichenkette unterstützt bereits
+_multibyte_. Wenn jemand "C String" sagt, ist eigentlich "C multibyte
+Zeichenkette" gemeint.
 
-For example:
+Egal ob ein spezifisches Zeichen im String nur auf einem einzigen
+Byte besteht, oder die gesamte Zeichenkette nur aus einfachen Zeichen
+besteht, es handelt sich trotzdem um ein _multibyte String_.
+
+Zum Beispiel:
 
 ``` {.c}
 char c[128] = "Hello, world!";  // Multibyte string
 ```
 
-What we're saying here is that a particular character that's not in the
-basic character set could be composed of multiple bytes. Up to
-[i[`MB_LEN_MAX` macro]]`MB_LEN_MAX` of them (from `<limits.h>`). Sure,
-it only looks like one character on the screen, but it could be multiple
-bytes.
+Was wir meinen ist, dass obwohl ein Zeichen, welches nicht im _basic
+character set_ enthalten ist, aus mehreren Bytes bestehen könnte. Bis zu
+[i[`MB_LEN_MAX` macro]]`MB_LEN_MAX` Stück (aus `<limits.h>`). Sieht zwar
+auf dem Bildschirm wie ein einzelnes Zeichen aus, kann aber aus meheren
+Bytes bestehen.
 
-You can throw Unicode values in there, as well, as we saw earlier:
+Und wie wir bereits besehen haben, können wir auch Unicode Zeichen
+reinstopfen:
 
 ``` {.c}
 char *s = "\u20AC1.23";
@@ -445,7 +453,7 @@ char *s = "\u20AC1.23";
 printf("%s\n", s);  // €1.23
 ```
 
-But here we're getting into some weirdness, because check this out:
+Aber hier fängt es an komisch zu werden, schau mal:
 
 [i[`strlen()` function-->with UTF-8]<]
 
@@ -455,19 +463,23 @@ char *s = "\u20AC1.23";  // €1.23
 printf("%zu\n", strlen(s));  // 7!
 ```
 
-The string length of `"€1.23"` is `7`?! Yes! Well, on my system, yes!
-Remember that `strlen()` returns the number of bytes in the string, not
-the number of characters. (When we get to "wide characters", coming up,
-we'll see a way to get the number of characters in the string.)
+Die Länge der Zeichenkette `"€1.23"` soll `7` sein?! Ist so!
+Genaugenommen ist das auf meinem Rechner der Fall. Du magst Dich
+erinnern, dass `strlen()` die Anzahl Bytes, aus der die Zeichenkette
+besteht zurückgibt, nicht die Anzahl der Zeichen. (Wenn wir gleich
+_wide Character_ besprechen, sehen wir, wie die Anzahl Zeichen ermittelt
+werden kann.)
 
 [i[`strlen()` function-->with UTF-8]>]
 
-Note that while C allows individual multibyte `char` constants (as
-opposed to `char*`), the behavior of these varies by implementation and
-your compiler might warn on it.
+Beachte, dass C zwar _multibyte_ `char` (im Gegensatz
+zu `char*`) Konstanten unterstützt, dieses Verhalten aber von der
+konkreten Implementierung abhängig ist und ein Compiler dafür vermutlich
+Warnungen erzeugt.
 
-GCC, for example, warns of multi-character character constants for the
-following two lines (and, on my system, prints out the UTF-8 encoding):
+GCC warnt beispielsweise wegen _multi-character character constant_ wenn
+er auf die folgenden Zeilen stößt (und druckt bei mir die UTF-8
+Kodierung)
 
 ``` {.c}
 printf("%x\n", '€');
@@ -480,54 +492,61 @@ printf("%x\n", '\u20ac');
 
 [i[Wide characters]<]
 
-If you're not a multibyte character, then you're a _wide character_.
+Wenn Du kein _multibyte character_ sein magst, musst Du ein _wide
+character_ werden.
 
-A wide character is a single value that can uniquely represent any
-character in the current locale. It's analogous to Unicode code points.
-But it might not be. Or it might be.
+Bei einem _wide character_ handelt es sich um einen einzelnen Wert,
+welcher eindeutig ein Zeichen aus der eingestellten Locale darstellen
+kann. Das ist analog zum _Codepoint_ Konzept bei Unicode. Oder nicht.
+Oder vieleicht doch.
 
-Basically, where multibyte character strings are arrays of bytes, wide
-character strings are arrays of _characters_. So you can start thinking
-on a character-by-character basis rather than a byte-by-byte basis (the
-latter of which gets all messy when characters start taking up variable
-numbers of bytes).
+Im Grunde genommen handelt es sich bei _wide character_ Zeichenketten
+um Strings bestehende aus _Zeichen_ (oder Buchstaben und Ziffer etc)
+während _multibyte Strings_ Arrays von Bytes sind. Das erlaubt es die
+Zeichenkette tatsächlich als Verkettung von Zeichen zu bestrahten, statt
+als Bytes (was umständlich ist, wenn ein Zeichen aus mehreren Bytes
+besteht.
 
 [i[`wchar_t` type]<]
 
-Wide characters can be represented by a number of types, but the big
-standout one is `wchar_t`. It's the main one. It's like `char`, except
-wide.
+_Wide characters_ können mit durch unterschiedliche Typen dargestellt
+werden, aber ein Stich hervor: `wchar_t`. Das ist der Boss. Wie `char`
+nur _wide_.
 
-You might be wondering if you can't tell if it's Unicode or not, how
-does that allow you much flexibility in terms of writing code? `wchar_t`
-opens some of those doors, as there are a rich set of functions you can
-use to deal with `wchar_t` strings (like getting the length, etc.)
-without caring about the encoding.
+Du fragst Dich vielleicht: wenn ich nicht feststellen kann, ob es sich
+um Unicode handelt, woraus ergibt sich dann ein Vorteil, wenn ich Code
+verfasse? `wchar_t` eröffnet einige Türen, da es einen reichhaltige
+Menge Funktionen gibt, die mit `wchar_t` Strings umgehen können (z.B. um
+die Länge zu ermitteln), und zwar ohne, dass man sich überhaupt um den
+Zeichensatz kümmern muss.
 
 ## Using Wide Characters and `wchar_t`
+## Breite Zeiche und `wchar_t` verwenden
 
-Time for a new type: `wchar_t`. This is the main wide character type.
-Remember how a `char` is only one byte? And a byte's not enough to
-represent all characters, potentially? Well, this one is enough.
+Zeit also für den neuen Typ: `wchar_t`. Das ist der haupt type für
+_wide character_. Weisste noch wie `char` aus nur einem Byte besteht?
+Und, dass ein Byte nicht ausreichend um beliebige Zeichen darzustellen?
+Was soll ich sagen: `wchar_t` reicht aus.
 
-To use `wchar_t`, include `<wchar.h>`.
+Um `wchar_t` zu verwenden, muss `<wchar.h>` _included_ werden.
 
-How many bytes big is it? Well, it's not totally clear. Could be 16
-bits. Could be 32 bits.
+Und aus wievielen Bytes besteht `wchar_t` nun? Kann man so nicht sagen.
+Könnte 16 Bit sein. Könnte 32 Bit sein.
 
-But wait, you're saying---if it's only 16 bits, it's not big enough to
-hold all the Unicode code points, is it? You're right---it's not. The
-spec doesn't require it to be. It just has to be able to represent all
-the characters in the current locale.
+Aber Moment mal, wenn es nur 16 Bit lang ist, reicht es doch nicht, um
+alle Unicode _Codepoints_ zu fassen? Das stimmt. Der Standard verlangt
+das auch nicht. Es muss nur ausreichen, um alle Zeichen aus der
+aktuellen Locale zu erfassen.
 
-This can cause grief with Unicode on platforms with 16-bit `wchar_t`s
-(ahem---Windows). But that's out of scope for this guide.
+Darum bereitet Unicode auch Kopfschmerzen auf Plattformen mit 16 Bit
+`wchar_t` (eh ... Windows). Aber die Diskussion würde den Umfang dieses
+Handbuchs sprengen.
 
 [i[`L` wide character prefix]<]
 
-You can declare a string or character of this type with the `L` prefix,
-and you can print them with the `%ls` ("ell ess") format specifier. Or
-print an individual `wchar_t` with `%lc`.
+Eine String- oder einzelnde Zeichenkonstante von diesem Type deklariert
+man mit dem `L` Präfix. Und ausgeben tut man sie mit der `%ls` ("ell
+ess") Formatanweisung, bzw. `%lc` für ein einzelnes `wchar_t` Zeichen.
 
 ``` {.c}
 wchar_t *s = L"Hello, world!";
@@ -538,33 +557,35 @@ printf("%ls %lc\n", s, c);
 
 [i[`L` wide character prefix]>]
 
-Now---are those characters stored as Unicode code points, or not?
-Depends on the implementation. But you can test if they are with the
-macro [i[`__STDC_ISO_10646__` macro]] `__STDC_ISO_10646__`. If this is
-defined, the answer is, "It's Unicode!"
+So, werden diese Zeichen nun als Unicode _Codepoints_ gespeichert oder
+nicht? Das kommt auf die Implementierung an. Aber man kann das
+mit dem [i[`__STDC_ISO_10646__` macro]] `__STDC_ISO_10646__` Makro
+feststellen. Sofern der definiert ist, haben wir Unicode!
 
-More detailedly, the value in that macro is an integer in the form
-`yyyymm` that lets you know what Unicode standard you can rely
-on---whatever was in effect on that date.
+Ein kleines Detail: bei dem Wert des Macros handelt es sich um eine Zahl
+der Form `yyyymm` die angibt, welcher Unicode Standard unterstützt wird.
+Nämlich der, der zu diesem Datum gültig war.
 
-But how do you use them?
+Aber wir verwenden wir sie?
 
-### Multibyte to `wchar_t` Conversions
+### Multibyte zu `wchar_t` Wandlung (_Conversions_)
 
-So how do we get from the byte-oriented standard strings to the
-character-oriented wide strings and back?
+Wie wechseln wir nun zwischen Byte-orientierten standard C-Strings und
+Zeichen-basierten _wide Strings_ hin- und her?
 
-We can use a couple string conversion functions to make this happen.
+Dafür gibt es eine Reihe von String Umwandlungsfunktionen.
 
-First, some naming conventions you'll see in these functions:
+Vorab ein paar Namenskonventionen, die bei diesen Funktion verwendet
+werden:
 
 * `mb`: multibyte
 * `wc`: wide character
 * `mbs`: multibyte string
 * `wcs`: wide character string
 
-So if we want to convert a multibyte string to a wide character string,
-we can call the `mbstowcs()`. And the other way around: `wcstombs()`.
+Will man also einen _multibyte String_ in eine _wide character_ String
+wandeln, ruft mn einfach `mbtowcs()` auf. Und in die andere Richtung:
+`wcstombs()`
 
 
 
